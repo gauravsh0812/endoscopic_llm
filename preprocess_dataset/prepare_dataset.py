@@ -10,12 +10,17 @@ base = "/data/gauravs/"
 ssg = os.path.join(base, "ssg-qa")
 cholec = os.path.join(base, "TF-Cholec80/data/cholec80")
 new_data = os.path.join(base, "combine_data")
+if not os.path.exists(new_data):
+    os.mkdir(new_data)
 
 for i in range(50):
     i = "{:02d}".format(i)
 
     folder = f"VID{i}"
     new_folder = os.path.join(new_data, folder)
+    if not os.path.exists(new_folder):
+        os.mkdir(new_folder)
+        
     imgs = os.path.join(new_folder, "imgs")
     qas = os.path.join(new_folder, "qas")
 
