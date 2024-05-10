@@ -15,18 +15,17 @@ if not os.path.exists(new_data):
 
 for i in range(1,81):
     i = "{:02d}".format(i)
-
     folder = f"VID{i}"
-    new_folder = os.path.join(new_data, folder)
-    imgs = os.path.join(new_folder, "imgs")
-    qas = os.path.join(new_folder, "qas")
-    for f in [new_folder, imgs, qas]:
-        if not os.path.exists(f):
-            os.mkdir(f)
-
     ssg_path = os.path.join(ssg, folder)
 
     if os.path.exists(ssg_path):
+        new_folder = os.path.join(new_data, folder)
+        imgs = os.path.join(new_folder, "imgs")
+        qas = os.path.join(new_folder, "qas")
+        for f in [new_folder, imgs, qas]:
+            if not os.path.exists(f):
+                os.mkdir(f)
+    
         ssg_list = os.listdir(ssg_path)
         cholec_path = os.path.join(cholec, f"frames/video{i}")
         cholec_list = os.listdir(cholec_path)
