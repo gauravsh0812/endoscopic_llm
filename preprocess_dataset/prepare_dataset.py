@@ -18,11 +18,13 @@ for i in range(50):
 
     folder = f"VID{i}"
     new_folder = os.path.join(new_data, folder)
-    if not os.path.exists(new_folder):
-        os.mkdir(new_folder)
-        
     imgs = os.path.join(new_folder, "imgs")
     qas = os.path.join(new_folder, "qas")
+    for f in [new_folder, imgs, qas]:
+        if not os.path.exists(f):
+            os.mkdir(f)
+
+    
 
     ssg_path = os.path.join(ssg, folder)
 
