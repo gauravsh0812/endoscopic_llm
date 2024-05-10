@@ -1,5 +1,10 @@
 import os
 import shutil
+import yaml
+from box import Box
+
+with open("config/config.yaml") as f:
+    cfg = Box(yaml.safe_load(f))
 
 base = "/data/gauravs/"
 ssg = os.path.join(base, "ssg-qa")
