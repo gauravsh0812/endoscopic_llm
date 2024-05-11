@@ -32,8 +32,8 @@ def preprocess_data(vid,img,num,qa):
     torch.save(IMAGE, f"{cfg.dataset.path_to_data}/image_tensors/{num}.pt")
 
     # wrting questions and answers
-    q = open(f"{cfg.dataset.path_to_data}/questions/question_{num}.lst") 
-    a = open(f"{cfg.dataset.path_to_data}/answers/answer_{num}.lst")
+    q = open(f"{cfg.dataset.path_to_data}/questions/question_{num}.lst", "w") 
+    a = open(f"{cfg.dataset.path_to_data}/answers/answer_{num}.lst", "w")
     for _qa in qa:
         _qas = _qa.split("|")[0]
         _q,_a = _qas[0], _qas[1]
