@@ -13,11 +13,11 @@ with open("config/config.yaml") as f:
 if not os.path.exists(f"{cfg.dataset.path_to_data}/image_tensors"):
     os.mkdir(f"{cfg.dataset.path_to_data}/image_tensors")
 if not os.path.exists(f"{cfg.dataset.path_to_data}/questions"):
-    questions = open(f"{cfg.dataset.path_to_data}/questions") 
+    os.mkdir(f"{cfg.dataset.path_to_data}/questions") 
 if not os.path.exists(f"{cfg.dataset.path_to_data}/answers"):
-    answers = open(f"{cfg.dataset.path_to_data}/answers")
+    os.mkdir(f"{cfg.dataset.path_to_data}/answers")
 if not os.path.exists("logs"):
-        os.mkdir('logs')
+    os.mkdir('logs')
 
 def preprocess(vid,img,num,qa):
     
