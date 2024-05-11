@@ -1,2 +1,59 @@
+model_name: clip_roberta_adaptor_V2_gelu
+general:
+  seed: 42
+  wandb: False
+  ddp: False
+  ncpus: 8
+  gpus: 0
+  world_size: 2
+  rank: 0
+  device: "cuda"
+  preprocess: False
+  load_trained_model_for_testing: False 
+
 dataset:
-  data_path: "/data/gauravs"
+  path_to_data: "/data/gauravs/combine_data/"
+  get_image_tensors: True
+  shuffle: True
+  vocab_freq: 5
+  num_workers: 0
+  pin_memory: False
+  image_width: 480
+  image_height: 320
+
+training:
+  general:
+    clip: 1 
+    batch_size: 16
+    epochs: 50
+    dropout: 0.3
+    learning_rate: 0.001
+    weight_decay: 0.00003
+    betas: [0.9,0.8]
+    early_stopping: 8
+    num_classes: 11
+  
+  scheduler:
+    isScheduler: True
+    verbose: True
+    scheduler_step_size: 5
+    scheduler_gamma: 0.9
+  
+  adaptor:
+    features: [512,256,128,64]
+
+  roberta:
+    in_dim: 768
+    finetune: False
+
+  clip:
+    finetune: False
+    configuration: 
+      hidden_size: 128
+      intermediate_size: 1408
+      projection_dim: 192
+      num_hidden_layers: 3
+      num_attention_heads: 4
+      num_channels: 3
+      image_size: 224
+      patch_size: 32
