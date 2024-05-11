@@ -46,7 +46,7 @@ def preprocess():
     for v in os.listdir(cfg.dataset.path_to_data):
         if "VID" in v:
             imgs = os.listdir(f"{cfg.dataset.path_to_data}/{v}/imgs")
-            qas = os.listdir(f"{cfg.dataset.path_to_data}/{v}/qas")
+            qas = f"{cfg.dataset.path_to_data}/{v}/qas"
             for im in imgs:
                 num = int(im.split(".")[0])
                 qa = os.path.join(qas, f"{num}.txt")
