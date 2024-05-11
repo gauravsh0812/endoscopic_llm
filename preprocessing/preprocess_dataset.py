@@ -34,7 +34,7 @@ def preprocess_data(vid,img,num,qa):
     q = open(f"{cfg.dataset.path_to_data}/questions/question_{num}.lst", "w") 
     a = open(f"{cfg.dataset.path_to_data}/answers/answer_{num}.lst", "w")
     for _qa in qa:
-        _qas = _qa.split("|")[0]
+        _qas = _qa.split("|")
         print(_qas)
         _q,_a = _qas[0], _qas[1]
         q.write(_q + "\n")
