@@ -21,6 +21,7 @@ if not os.path.exists("logs"):
 
 def preprocess_data(vid,img,num,qa):
     
+    print(vid,img,num,qa)
     IMAGE = Image.open(f"{cfg.dataset.path_to_data}/{vid}/imgs/{img}")
     
     # convert to tensor
