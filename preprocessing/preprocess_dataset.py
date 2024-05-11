@@ -45,7 +45,7 @@ def preprocess():
     
     print("creating image tensors...")
     
-    for v in tqdm(iter(os.listdir(cfg.dataset.path_to_data))):
+    for v in tqdm(os.listdir(cfg.dataset.path_to_data)):
         if "VID" in v:
             imgs = os.listdir(f"{cfg.dataset.path_to_data}/{v}/imgs")
             qas = f"{cfg.dataset.path_to_data}/{v}/qas"
