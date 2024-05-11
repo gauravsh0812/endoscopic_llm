@@ -19,7 +19,7 @@ if not os.path.exists(f"{cfg.dataset.path_to_data}/answers"):
 if not os.path.exists("logs"):
     os.mkdir('logs')
 
-def preprocess(vid,img,num,qa):
+def preprocess_data(vid,img,num,qa):
     
     IMAGE = Image.open(f"{cfg.dataset.path_to_data}/{vid}/imgs/{img}")
     
@@ -50,7 +50,7 @@ def preprocess():
             for im in imgs:
                 num = int(im.split(".")[0])
                 qa = os.path.join(qas, f"{num}.txt")
-                preprocess(v,im,num,qa)
+                preprocess_data(v,im,num,qa)
 
 if __name__ == "__main__":
     preprocess()
