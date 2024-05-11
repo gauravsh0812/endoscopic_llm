@@ -21,7 +21,6 @@ if not os.path.exists("logs"):
 
 def preprocess_data(vid,img,num,qa):
     
-    print(vid,img,num,qa)
     IMAGE = Image.open(f"{cfg.dataset.path_to_data}/{vid}/imgs/{img}")
     
     # convert to tensor
@@ -36,6 +35,7 @@ def preprocess_data(vid,img,num,qa):
     a = open(f"{cfg.dataset.path_to_data}/answers/answer_{num}.lst", "w")
     for _qa in qa:
         _qas = _qa.split("|")[0]
+        print(_qas)
         _q,_a = _qas[0], _qas[1]
         q.write(_q + "\n")
         a.write(_a + "\n")
