@@ -1,8 +1,8 @@
 from PIL import Image
 import requests
-from transformers import AutoProcessor, CLIPVisionModelWithProjection
+from transformers import AutoProcessor, CLIPVisionModel
 
-model = CLIPVisionModelWithProjection.from_pretrained("openai/clip-vit-base-patch32")
+model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")
 processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 # url = "http://images.cocodataset.org/val2017/000000039769.jpg"
