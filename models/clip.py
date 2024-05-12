@@ -13,7 +13,7 @@ class ClipVisionEncoder(nn.Module):
         #     self.model = CLIPVisionModel(configuration)
         # else:
         self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
-        self.model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+        self.model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")
 
     def forward(self, image_paths, device):
 
