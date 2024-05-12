@@ -28,7 +28,7 @@ def preprocess_data(vid,img,num,qa):
 
     # saving the image
     shutil.copyfile(f"{cfg.dataset.path_to_data}/{vid}/imgs/{img}",
-                    f"{cfg.dataset.path_to_data}/imgs/{img}")
+                    f"{cfg.dataset.path_to_data}/images/{img}")
 
     # converting and saving to tensor
     # convert = transforms.ToTensor()
