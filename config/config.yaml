@@ -13,7 +13,6 @@ general:
 
 dataset:
   path_to_data: "/data/gauravs/combine_data/"
-  get_image_tensors: True
   shuffle: True
   vocab_freq: 5
   num_workers: 0
@@ -27,11 +26,11 @@ training:
     batch_size: 16
     epochs: 50
     dropout: 0.3
-    learning_rate: 0.001
-    weight_decay: 0.00003
+    learning_rate: 0.01
+    weight_decay: 0.00001
     betas: [0.9,0.8]
     early_stopping: 8
-    num_classes: 11
+    num_classes: 1
   
   scheduler:
     isScheduler: True

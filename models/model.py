@@ -1,7 +1,7 @@
 import torch 
 import torch.nn as nn
 
-class ClevrMath_model(nn.Module):
+class Endoscopic_model(nn.Module):
 
     def __init__(self, 
                  encoder, 
@@ -10,7 +10,7 @@ class ClevrMath_model(nn.Module):
                  robertaadaptor,
                  projector,
     ):
-        super(ClevrMath_model, self).__init__()
+        super(Endoscopic_model, self).__init__()
         self.enc = encoder
         self.clipadaptor = clipadaptor
         self.robertaadaptor = robertaadaptor

@@ -24,7 +24,7 @@ def get_max_len(train, test, val):
     
     c = 0
     for _q in qtns:
-        l = len(_q.split())
+        l = len(_q.replace("\n","").strip().split())
         if l > c:
             c=l
     return c
@@ -39,11 +39,9 @@ class Img2MML_dataset(Dataset):
     def __getitem__(self, index):
         qtn = self.dataframe.iloc[index, 1]
         img = self.dataframe.iloc[index, 0] 
-        lbl = self.dataframe.iloc[index,2]
-        tmp = self.dataframe.iloc[index,-1]
-        return img,qtn,lbl,tmp
+        ans = self.dataframe.iloc[index,2]
+        return img,qtn,ans
         
-
 class My_pad_collate(object):
     def __init__(self, device, max_len):
         self.device = device
@@ -51,7 +49,7 @@ class My_pad_collate(object):
         self.tokenizer = RobertaTokenizer.from_pretrained("FacebookAI/roberta-base")
 
     def __call__(self, batch):
-        _img, _qtns, _lbls, _tmps = zip(*batch)
+        _img, _qtns, _ans = zip(*batch)
 
         padded_tokenized_qtns = self.tokenizer(
                                 _qtns, 
@@ -59,66 +57,73 @@ class My_pad_collate(object):
                                 padding='max_length',
                                 truncation=True,
                                 max_length=self.max_len)
-
-        # the labels will be stored as tensor
-        # 3 will be stored as [0.,0.,0.,1.]
-        lbls = []
-        for _l in _lbls:
-            _l = int(_l.replace("\n",""))
-            z = torch.zeros(11)
-            z[_l] = 1.0
-            lbls.append(z)
+        
+        padded_tokenized_ans = self.tokenizer(
+                                _ans, 
+                                return_tensors="pt",
+                                padding=1,
+                                truncation=True,
+                                max_length=self.max_len)
         
         # tensors
         _img = torch.Tensor(_img)
-        _lbls = torch.stack(lbls)
-        input_ids = torch.Tensor(padded_tokenized_qtns["input_ids"])
-        attn_masks = torch.Tensor(padded_tokenized_qtns["attention_mask"])
-
+        _qtn_input_ids = torch.Tensor(padded_tokenized_qtns["input_ids"])
+        _qtn_attn_masks = torch.Tensor(padded_tokenized_qtns["attention_mask"])
+        _ans_input_ids = torch.Tensor(padded_tokenized_ans["input_ids"])
+        _ans_attn_masks = torch.Tensor(padded_tokenized_ans["attention_mask"])
+        
         return (
             _img.to(self.device),
-            input_ids.to(self.device),
-            attn_masks.to(self.device),
-            _lbls.to(self.device),
-            _tmps,
+            _qtn_input_ids.to(self.device),
+            _qtn_attn_masks.to(self.device),
+            _ans_input_ids.to(self.device),
+            _ans_attn_masks.to(self.device),
         )
     
 def data_loaders(batch_size):
 
     print("creating dataloaders...")
-    q = open(f"{cfg.dataset.path_to_data}/questions.lst").readlines()
-    l = open(f"{cfg.dataset.path_to_data}/labels.lst").readlines()
-    t = open(f"{cfg.dataset.path_to_data}/templates.lst").readlines()
-
-    assert len(q) == len(l) == len(t)
-
-    image_num = range(0, len(q))
+    
+    questions = os.listdir(f"{cfg.dataset.path_to_data}/questions")
+    answers = os.listdir(f"{cfg.dataset.path_to_data}/answers")
+    questions_num = range(0, len(questions))
 
     # split the image_num into train, test, validate
     train_val_images, test_images = train_test_split(
-        image_num, test_size=0.1, random_state=42
+        questions_num, test_size=0.1, random_state=42
     )
     train_images, val_images = train_test_split(
         train_val_images, test_size=0.1, random_state=42
     )
 
-    for t_idx, t_images in enumerate([train_images, test_images, val_images]):
+    for t_idx, t_qtns in enumerate([train_images, test_images, val_images]):
+        QTNS = [questions[num] for num in t_qtns]
+        IMGS = list()
+        ALL_QTNS = list()
+        ALL_ANS = list()
+        for _Q in QTNS:
+            _idx = int(_Q.split(".")[0].split("_")[1])
+            _qtns = open(f"{cfg.dataset.path_to_data}/questions_{_idx}.lst").readlines()
+            _ans = open(f"{cfg.dataset.path_to_data}/answers_{_idx}.lst").readlines()
+            for _q,_a in zip(_qtns,_ans):
+                # keeping qtns thhat has one word answer only
+                if len(_a.split(",")) > 1:
+                    ALL_QTNS.append(_q)
+                    ALL_ANS.append(_a)
+                    IMGS.append(f"{cfg.dataset.path_to_data}/image_tensors/{_idx}.pt")
+
         qi_data = {
-            "IMG": [num for num in t_images],
-            "QUESTION": [
-                ("<sos> " + q[num].strip() + " <eos>") for num in t_images
-            ],
-            "LABEL": [l[num].strip().replace("\n","") for num in t_images],
-            "TEMPLATE": [t[num].strip().replace("\n","") for num in t_images],
+            "IMG": IMGS,
+            "QUESTION": ALL_QTNS,
+            "ANSWER": ALL_ANS
         }
     
         if t_idx == 0:
-            train = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "LABEL", "TEMPLATE"])
+            train = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
         elif t_idx == 1:
-            test = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "LABEL", "TEMPLATE"])
+            test = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
         else:
-            val = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "LABEL", "TEMPLATE"])
-    
+            val = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
     
     print(f"saving dataset files to {cfg.dataset.path_to_data}/ folder...")
     train.to_csv(f"{cfg.dataset.path_to_data}/train.csv", index=False)

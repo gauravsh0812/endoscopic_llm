@@ -15,7 +15,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from preprocessing.create_dataloaders import data_loaders
 from models.clip import ClipVisionEncoder
 from models.roberta import RobertaEncoder
-from models.model import ClevrMath_model
+from models.model import Endoscopic_model
 from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
 from src.training import train
 from src.testing import evaluate
@@ -81,14 +81,12 @@ def define_model(max_len):
     for param in DEC.parameters():
         param.requires_grad = cfg.training.roberta.finetune 
 
-    model = ClevrMath_model(ENC, 
+    model = Endoscopic_model(ENC, 
                             DEC,
                             CLIPADA,
                             ROBADA,
                             PROJ,)
-
     return model
-
 
 def train_model(rank=None):
 

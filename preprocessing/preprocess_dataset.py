@@ -1,4 +1,5 @@
 import os
+import shutil
 import yaml
 import torch
 from box import Box
@@ -22,12 +23,14 @@ if not os.path.exists("logs"):
 def preprocess_data(vid,img,num,qa):
     
     IMAGE = Image.open(f"{cfg.dataset.path_to_data}/{vid}/imgs/{img}")
-    
-    # convert to tensor
+
+    # saving the image
+    shutil.copyfile(f"{cfg.dataset.path_to_data}/{vid}/imgs/{img}",
+                    f"{cfg.dataset.path_to_data}/imgs/{img}")
+
+    # converting and saving to tensor
     convert = transforms.ToTensor()
     IMAGE = convert(IMAGE)
-
-    # saving the image 
     torch.save(IMAGE, f"{cfg.dataset.path_to_data}/image_tensors/{num}.pt")
 
     # wrting questions and answers
