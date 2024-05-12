@@ -25,6 +25,8 @@ class ClipVisionEncoder(nn.Module):
             last_hidden_state = outputs.last_hidden_state
             pooled_output = outputs.pooler_output  # pooled classes states
 
+            print("last_hidden_state shape: ", last_hidden_state.shape)
+
             _hid.append(last_hidden_state.squeeze(0))
             _pool.append(pooled_output.squeeze(0))
 
@@ -33,4 +35,4 @@ class ClipVisionEncoder(nn.Module):
         return torch.stack(_hid).to(device), torch.stack(_pool).to(device)
     
 cve = ClipVisionEncoder()
-cve([])
+cve(["/data/gauravs/combine_data/images/1398.png"], "cuda:0")

@@ -110,7 +110,7 @@ def data_loaders(batch_size):
                 if len(_a.split(",")) > 1:
                     ALL_QTNS.append(_q)
                     ALL_ANS.append(_a)
-                    IMGS.append(f"{cfg.dataset.path_to_data}/image_tensors/{_idx}.pt")
+                    IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
 
         qi_data = {
             "IMG": IMGS,
