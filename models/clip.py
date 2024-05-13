@@ -35,5 +35,6 @@ class ClipVisionEncoder(nn.Module):
         # pooled: (B, 768)
         return torch.stack(_hid).to(device), torch.stack(_pool).to(device)
     
-cve = ClipVisionEncoder()
-cve(["/data/gauravs/combine_data/images/1398.png"], torch.device("cuda:0"))
+device = torch.device("cuda:0")
+cve = ClipVisionEncoder().to(device)
+cve(["/data/gauravs/combine_data/images/1398.png"], device)
