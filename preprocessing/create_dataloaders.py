@@ -103,8 +103,8 @@ def data_loaders(batch_size):
         ALL_ANS = list()
         for _Q in QTNS:
             _idx = int(_Q.split(".")[0].split("_")[1])
-            _qtns = open(f"{cfg.dataset.path_to_data}/questions/questions_{_idx}.lst").readlines()
-            _ans = open(f"{cfg.dataset.path_to_data}/answers/answers_{_idx}.lst").readlines()
+            _qtns = open(f"{cfg.dataset.path_to_data}/questions/question_{_idx}.lst").readlines()
+            _ans = open(f"{cfg.dataset.path_to_data}/answers/answer_{_idx}.lst").readlines()
             for _q,_a in zip(_qtns,_ans):
                 # keeping qtns thhat has one word answer only
                 if len(_a.split(",")) > 1:
