@@ -18,13 +18,12 @@ class BiLSTM(nn.Module):
             batch_first=True,
             dropout=0.1, 
         )
-        self.dropout = nn.Dropout(p=dropout)
-        self.embedding = nn.Embedding(output_dim, embed_dim)
+        # self.dropout = nn.Dropout(p=dropout)
+        # self.embedding = nn.Embedding(output_dim, embed_dim)
         self.fc = nn.Linear(hidden_dim, output_dim)
     
     def forward(self,x):
-        x = self.embedding(x)
-        x = self.dropout(x)
+        # x = self.embedding(x)
         print("lstm shaoe: ", x.shape)
         x = self.lstm(x)
         x = self.fc(x)  # (B, L, output_dim)
