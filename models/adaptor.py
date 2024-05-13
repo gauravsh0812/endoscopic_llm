@@ -51,9 +51,10 @@ class Projector(nn.Module):
 
     def forward(self, xc, xr):
         # x_roberta + x
+        print("xc xr shape: ", xc.shape, xr.shape)
         x = torch.cat((xc,xr), dim=-1)  
         x = self.final_lin1(x)
-        print(x.shape)
+        print("x shape: ", x.shape)
         x = self.gelu(self.norm(x)) 
         x = x.permute(0,2,1)
         x = self.gelu(self.final_lin2(x)).permute(0,2,1)  # (B,3,64)
