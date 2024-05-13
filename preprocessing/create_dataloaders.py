@@ -66,7 +66,7 @@ class My_pad_collate(object):
             _img,
             _qtn_input_ids.to(self.device),
             _qtn_attn_masks.to(self.device),
-            _ans.to(self.device),
+            _ans,
         )
     
 def data_loaders(batch_size):
