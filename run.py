@@ -206,7 +206,6 @@ def train_model(rank=None):
                 # training and validation
                 train_loss = train(
                     model,
-                    cfg.dataset.path_to_data, 
                     train_dataloader,
                     optimizer,
                     criterion,
@@ -218,7 +217,6 @@ def train_model(rank=None):
 
                 val_loss, accuracy = evaluate(
                     model,
-                    cfg.dataset.path_to_data,
                     val_dataloader,
                     criterion,
                     device,
