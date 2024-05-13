@@ -11,11 +11,12 @@ class BiLSTM(nn.Module):
     ):
         super(BiLSTM,self).__init__()
         self.lstm = nn.LSTM(
-            input_dim=input_dim,
-            hidden_dim=hidden_dim,
+            input_size=input_dim,
+            hidden_size=hidden_dim,
             num_layers=1,
             bidirectional=True,
             batch_first=True,
+            dropout=0.1, 
         )
         self.dropout = nn.Dropout(p=dropout)
         self.embedding = nn.Embedding(output_dim, embed_dim)
