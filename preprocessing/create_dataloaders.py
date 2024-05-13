@@ -30,8 +30,9 @@ def get_max_len(train, test, val):
     return c
 
 class Img2MML_dataset(Dataset):
-    def __init__(self, dataframe):
+    def __init__(self, dataframe, ans_vocab):
         self.dataframe = dataframe
+        self.ans_vocab = ans_vocab
 
     def __len__(self):
         return len(self.dataframe)
@@ -40,7 +41,15 @@ class Img2MML_dataset(Dataset):
         qtn = self.dataframe.iloc[index, 1]
         img = self.dataframe.iloc[index, 0] 
         ans = self.dataframe.iloc[index,2]
-        return img,qtn,ans
+
+        indexed_ans = []
+        for token in ans.split():
+            if self.ans_vocab.stoi[token] is not None:
+                indexed_ans.append(self.ans_vocab.stoi[token])
+            else:
+                indexed_ans.append(self.ans_vocab.stoi["<unk>"])
+
+        return img,qtn,torch.Tensor(indexed_ans)
         
 class My_pad_collate(object):
     def __init__(self, device, max_len):
@@ -98,7 +107,7 @@ def data_loaders(batch_size):
                 # keeping qtns thhat has one word answer only
                 if len(_a.split(",")) > 1:
                     ALL_QTNS.append(_q)
-                    ALL_ANS.append(_a)
+                    ALL_ANS.append(f"<sos> {_a} <eos>")
                     IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
 
         qi_data = {
@@ -155,7 +164,7 @@ def data_loaders(batch_size):
     print("building dataloaders...")
 
     # initailizing class Img2MML_dataset: train dataloader
-    imml_train = Img2MML_dataset(train)
+    imml_train = Img2MML_dataset(train, ans_vocab)
     # creating dataloader
     if cfg.general.ddp:
         train_sampler = DistributedSampler(
@@ -182,7 +191,7 @@ def data_loaders(batch_size):
     )
 
     # initailizing class Img2MML_dataset: val dataloader
-    imml_val = Img2MML_dataset(val)
+    imml_val = Img2MML_dataset(val, ans_vocab)
 
     if cfg.general.ddp:
         val_sampler = SequentialSampler(imml_val)
@@ -203,7 +212,7 @@ def data_loaders(batch_size):
     )
 
     # initailizing class Img2MML_dataset: test dataloader
-    imml_test = Img2MML_dataset(test)
+    imml_test = Img2MML_dataset(test, ans_vocab)
     if cfg.general.ddp:
         test_sampler = SequentialSampler(imml_test)
         sampler = test_sampler
