@@ -131,6 +131,10 @@ def data_loaders(batch_size):
     train.to_csv(f"{cfg.dataset.path_to_data}/train.csv", index=False)
     test.to_csv(f"{cfg.dataset.path_to_data}/test.csv", index=False)
     val.to_csv(f"{cfg.dataset.path_to_data}/val.csv", index=False)
+    
+    print("training dataset size: ", len(train))
+    print("testing dataset size: ", len(test))
+    print("validation dataset size: ", len(val))
 
     # get max_len 
     max_len = get_max_len(train, test, val)    
