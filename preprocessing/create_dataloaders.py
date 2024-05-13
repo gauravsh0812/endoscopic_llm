@@ -244,6 +244,5 @@ def data_loaders(batch_size):
             test_dataloader, 
             val_dataloader, 
             qtn_tokenizer,
-            qtn_vocab, 
             ans_vocab,
             max_len)
