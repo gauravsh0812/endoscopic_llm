@@ -24,7 +24,6 @@ def train(
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
         
-        print(ans)
         ans = torch.stack(ans)
 
         ans = ans.to(device)
