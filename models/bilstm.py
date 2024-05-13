@@ -23,7 +23,8 @@ class BiLSTM(nn.Module):
         self.fc = nn.Linear(hidden_dim, output_dim)
     
     def forward(self,x):
-        x = self.dropout(self.embedding(x))
+        x = self.embedding(x)
+        x = self.dropout(x)
         x = self.lstm(x)
         x = self.fc(x)  # (B, L, output_dim)
 
