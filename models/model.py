@@ -33,6 +33,7 @@ class Endoscopic_model(nn.Module):
         clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
         roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
         projoutput = self.projector(clipoutput, roboutput) # (B,max,64)
+        projoutput = projoutput.long()
         final_output = self.dec(projoutput) #
         
         return final_output
