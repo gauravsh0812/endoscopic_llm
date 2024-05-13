@@ -39,7 +39,9 @@ def train(
             device
         )
 
-        # print("output shape: ", output.shape)
+        print("output shape: ", output.shape)
+
+        exit()
 
         labels = torch.argmax(labels, dim=1)  # (B,)
 
