@@ -18,6 +18,7 @@ class ClipVisionEncoder(nn.Module):
     def forward(self, image_paths, device):
 
         _hid, _pool = list(), list()
+        print("devices: ", device)
         for image_path in image_paths:
             image = Image.open(image_path)
             inputs = self.processor(images=image, return_tensors="pt").to(device)
