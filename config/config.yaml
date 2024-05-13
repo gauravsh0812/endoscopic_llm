@@ -5,7 +5,7 @@ general:
   ddp: False
   ncpus: 8
   gpus: 0
-  world_size: 4
+  world_size: 2
   rank: 0
   device: "cuda"
   preprocess: False
