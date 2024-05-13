@@ -35,11 +35,10 @@ def train(
             device,
         )
 
-        print("output shape: ", output.shape)
+        #print("output shape: ", output.shape)
 
+        print(ans)
         exit()
-
-        labels = torch.argmax(labels, dim=1)  # (B,)
 
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
                          labels.contiguous().view(-1))

@@ -19,7 +19,6 @@ class BiLSTM(nn.Module):
     
     def forward(self,x):
         x,(h,c) = self.lstm(x)
-        print("lstm shape: ", x.shape)
         x = self.fc(x)  # (B, 3, output_dim)
 
         return x
