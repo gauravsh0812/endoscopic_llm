@@ -20,7 +20,7 @@ from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
 from src.training import train
 from src.testing import evaluate
 
-with open("config/config_48.yaml") as f:
+with open("config/config.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 def set_random_seed(SEED):
