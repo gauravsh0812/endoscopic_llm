@@ -59,6 +59,7 @@ class My_pad_collate(object):
                                 max_length=self.max_len)
         
         # tensors
+        print("_imgs: ", _img)
         _img = torch.Tensor(_img)
         _qtn_input_ids = torch.Tensor(padded_tokenized_qtns["input_ids"])
         _qtn_attn_masks = torch.Tensor(padded_tokenized_qtns["attention_mask"])
