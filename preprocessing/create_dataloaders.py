@@ -106,7 +106,7 @@ def data_loaders(batch_size):
             for _q,_a in zip(_qtns,_ans):
                 # keeping qtns thhat has one word answer only
                 _alist = _a.replace("\n","").strip().split(",")
-                if len(_alist) == 1 and _alist != " ":
+                if len(_alist) == 1 and _alist[0] != " ":
                     print(_alist[0])
                     ALL_QTNS.append(_q)
                     ALL_ANS.append(f"<sos> {_alist[0]} <eos>")
