@@ -24,7 +24,9 @@ def train(
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
         
+        print(ans)
         ans = torch.stack(ans)
+
         ans = ans.to(device)
 
         # setting gradients to zero
@@ -39,7 +41,7 @@ def train(
         )
 
         #print("output shape: ", output.shape)
-
+        
         print("ans shape: ", ans.shape)
         exit()
 
