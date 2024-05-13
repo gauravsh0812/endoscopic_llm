@@ -28,8 +28,8 @@ class Endoscopic_model(nn.Module):
             device,
         ):
 
-        encoded_imgs,pooled_layers = self.enc(imgs, device)  # (B, L=w*h, dim)
-        last_hidden_roberta = self.dec(qtn_ids, qtn_attns) # (B, max_len, 768)        
+        encoded_imgs,pooled_layers = self.clipenc(imgs, device)  # (B, L=w*h, dim)
+        last_hidden_roberta = self.robenc(qtn_ids, qtn_attns) # (B, max_len, 768)        
         clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
         roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
         projoutput = self.projector(clipoutput, roboutput) # (B,max,64)
