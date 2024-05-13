@@ -39,12 +39,11 @@ def train(
             device,
         )
 
-        print("output shape: ", output.shape)
-        print("ans shape: ", ans.shape)
-        exit()
+        # print("output shape: ", output.shape)
+        # print("ans shape: ", ans.shape)
 
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
-                         labels.contiguous().view(-1))
+                         ans.contiguous().view(-1))
         
         loss.backward()
 

@@ -216,6 +216,8 @@ def train_model(rank=None):
                     rank=rank,
                 )
 
+                exit()
+                
                 val_loss, accuracy = evaluate(
                     model,
                     cfg.dataset.path_to_data,
