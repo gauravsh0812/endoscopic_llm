@@ -45,7 +45,7 @@ class Projector(nn.Module):
     def __init__(self, features, max_len, num_classes):
         super(Projector, self).__init__()
         self.final_lin1 = nn.Linear(features[-1]*2, features[-1])
-        # self.final_lin2 = nn.Linear(features[-1]*max_len, num_classes)
+        self.final_lin2 = nn.Linear(max_len, 3)
         self.gelu = nn.GELU()
         self.norm = nn.BatchNorm1d(10)
 
@@ -53,7 +53,7 @@ class Projector(nn.Module):
         # x_roberta + x
         x = torch.cat((xc,xr), dim=-1)  
         x = self.gelu(self.norm(self.final_lin1(x))) 
-        # x = torch.flatten(x, start_dim=-2, end_dim=-1)
-        # x = self.gelu(self.norm(self.final_lin2(x)))  # (B, 11)
+        x = x.permute(0,2,1)
+        x = self.gelu(self.norm(self.final_lin2(x))).permute(0,2,1)  # (B,3,64)
         
-        return x   # (B,max_len,64)
+        return x   # (B,3,64)
