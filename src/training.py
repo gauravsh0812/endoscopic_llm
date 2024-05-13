@@ -9,7 +9,7 @@ def train(
     criterion,
     clip,
     device,
-    ddp=False,
+    use_ddp=False,
     rank=None,
 ):
     # train mode is ON i.e. dropout and normalization tech. will be used
@@ -50,7 +50,7 @@ def train(
 
         epoch_loss += loss.item()
 
-        if (not ddp) or (ddp and rank == 0):
+        if (not use_ddp) or (use_ddp and rank == 0):
             desc = 'Loss: %.4f - Learning Rate: %.6f' % (loss.item(), optimizer.param_groups[0]['lr'])
             tset.set_description(desc)
 

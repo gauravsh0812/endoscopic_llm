@@ -204,7 +204,6 @@ def train_model(rank=None):
                 start_time = time.time()
 
                 # training and validation
-                print("ddp: ", cfg.general.ddp)
                 train_loss = train(
                     model,
                     cfg.dataset.path_to_data, 
@@ -213,7 +212,7 @@ def train_model(rank=None):
                     criterion,
                     cfg.training.general.clip,
                     device,
-                    ddp=cfg.general.ddp,
+                    use_ddp=cfg.general.ddp,
                     rank=rank,
                 )
 
