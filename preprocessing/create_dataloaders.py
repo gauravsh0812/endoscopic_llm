@@ -105,7 +105,8 @@ def data_loaders(batch_size):
             _ans = open(f"{cfg.dataset.path_to_data}/answers/answer_{_idx}.lst").readlines()
             for _q,_a in zip(_qtns,_ans):
                 # keeping qtns thhat has one word answer only
-                if len(_a.split(",")) == 1:
+                _alist = _a.split(",")
+                if len(_alist) == 1 and _alist[0] != " ":
                     ALL_QTNS.append(_q)
                     ALL_ANS.append(f"<sos> {_a} <eos>")
                     IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
