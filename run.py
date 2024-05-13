@@ -76,8 +76,6 @@ def define_model(max_len, ans_vocab):
         cfg.training.bilstm.in_dim,
         cfg.training.bilstm.hidden_dim,
         len(ans_vocab),
-        cfg.training.bilstm.embed_dim,
-        cfg.training.general.dropout,
     )
 
     # freezing the pre-trained models
