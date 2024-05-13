@@ -21,8 +21,8 @@ class ClipVisionEncoder(nn.Module):
         print("devices: ", device)
         for image_path in image_paths:
             image = Image.open(image_path)
-            inputs = self.processor(images=image, return_tensors="pt")
-            outputs = self.model(**inputs.to(device))
+            inputs = self.processor(images=image, return_tensors="pt").to(device)
+            outputs = self.model(**inputs)
             last_hidden_state = outputs.last_hidden_state
             pooled_output = outputs.pooler_output  # pooled classes states
 
@@ -36,4 +36,4 @@ class ClipVisionEncoder(nn.Module):
         return torch.stack(_hid).to(device), torch.stack(_pool).to(device)
     
 cve = ClipVisionEncoder()
-cve(["/data/gauravs/combine_data/images/1398.png"], "cuda:0")
+cve(["/data/gauravs/combine_data/images/1398.png"], torch.device("cuda:0"))
