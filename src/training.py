@@ -40,7 +40,7 @@ def train(
 
         #print("output shape: ", output.shape)
 
-        print(ans.shape)
+        print("ans shape: ", ans.shape)
         exit()
 
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
