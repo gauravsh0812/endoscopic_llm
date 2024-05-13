@@ -22,9 +22,8 @@ class Endoscopic_model(nn.Module):
             imgs,
             qtn_ids,
             qtn_attns,
-            ans_ids,
-            ans_attns,
-            device
+            ans,
+            device,
         ):
 
         encoded_imgs,pooled_layers = self.enc(imgs, device)  # (B, L=w*h, dim)

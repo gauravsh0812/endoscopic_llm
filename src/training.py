@@ -20,7 +20,7 @@ def train(
 
     tset = tqdm(iter(train_dataloader))
 
-    for i, (imgs, qtn_ids, qtn_attns, ans_ids,ans_attns) in enumerate(tset):
+    for i, (imgs, qtn_ids, qtn_attns, ans) in enumerate(tset):
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
         ans_attns = ans_attns.to(device)
@@ -34,9 +34,8 @@ def train(
             imgs,
             qtn_ids,
             qtn_attns,
-            ans_ids,
-            ans_attns,
-            device
+            ans,
+            device,
         )
 
         print("output shape: ", output.shape)
