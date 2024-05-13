@@ -4,10 +4,11 @@ import torch
 
 def evaluate(
     model,
-    data_path,
     test_dataloader,
     criterion,
     device,
+    qtn_tokenizer,
+    ans_vocab,
     is_test=False,
 ):
     model.eval()
@@ -15,48 +16,42 @@ def evaluate(
     accuracy = 0
 
     if is_test:
-        labels_file = open("logs/labels.txt","w")
-        labels_file.write("Templates \t True \t Pred \n")
+        labels_file = open("logs/predictions.txt","w")
+        labels_file.write("Images \t Qtns \t Target \t Prediction \n")
 
     with torch.no_grad():
-        for i, (imgs, ids, attns, labels, tmps) in enumerate(test_dataloader):
-            ids = ids.to(device)
-            attns = attns.to(device)
-            labels = labels.to(device, dtype=torch.long)
+        for i, (imgs, qtn_ids, qtn_attns, ans) in enumerate(test_dataloader):
+            qtn_attns = qtn_attns.to(device)
+            qtn_ids = qtn_ids.to(device)
         
-            _imgs = list()
-            for im in imgs:
-                _i = f"{data_path}/images/{int(im.item())}.png"
-                _imgs.append(_i)
+            ans = torch.stack(ans).long()
+            ans = ans.to(device)
 
-            output = model(_imgs,
-                           ids,
-                           attns,
-                           device)
+            output = model(
+                imgs,
+                qtn_ids,
+                qtn_attns,
+                device,
+            )
             
-            labels = torch.argmax(labels, dim=1)
+            pred = torch.argmax(output, dim=-1)
+
             loss = criterion(
-                            output.contiguous().view(-1,output.shape[-1]), 
-                            labels.contiguous().view(-1)
-                            )
+                output.contiguous().view(-1, output.shape[-1]), 
+                ans.contiguous().view(-1))
 
             epoch_loss += loss.item()
             
-            
-            pred_labels = torch.argmax(output, dim=1)
-            l = labels.cpu().tolist()
-            p = pred_labels.cpu().tolist()
-            
-            count=0
+            if is_test:
+                # for b in imgs.shape[0]:
+                    
+                for i,q,a,p in zip(imgs,qtn_ids,ans,pred):
+                    qtn = qtn_tokenizer.decode(q)
+                    
 
-            for i in range(len(p)):
-                if p[i] == l[i]:
-                    count+=1
-                        
-                if is_test:
-                    labels_file.write(f"{tmps[i]} \t\t {l[i]} \t\t {p[i]} \n")    
-    
-            accuracy+= count / len(p)
+                    labels_file.write(
+                        f"{i} \t {qtn} \t {a} \t {p}"
+                    )
 
         net_loss = epoch_loss / len(test_dataloader)
         accuracy = accuracy / len(test_dataloader)

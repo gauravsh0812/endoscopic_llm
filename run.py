@@ -124,7 +124,7 @@ def train_model(rank=None):
                 train_dataloader,
                 test_dataloader,
                 val_dataloader,
-                qtn_vocab,
+                qtn_tokenizer,
                 ans_vocab,
                 max_len,
             ) = data_loaders(cfg.training.general.batch_size)
@@ -140,7 +140,7 @@ def train_model(rank=None):
                 train_dataloader,
                 test_dataloader,
                 val_dataloader,
-                qtn_vocab, ans_vocab,
+                qtn_tokenizer, ans_vocab,
                 max_len,
             ) = data_loaders(cfg.training.general.batch_size)
             model = define_model(max_len,ans_vocab)
@@ -160,7 +160,7 @@ def train_model(rank=None):
             train_dataloader,
             test_dataloader,
             val_dataloader,
-            qtn_vocab, ans_vocab,
+            qtn_tokenizer, ans_vocab,
             max_len,
         ) = data_loaders()
         model = define_model(max_len,ans_vocab).to(device)
@@ -216,14 +216,14 @@ def train_model(rank=None):
                     rank=rank,
                 )
 
-                exit()
-
                 val_loss, accuracy = evaluate(
                     model,
                     cfg.dataset.path_to_data,
                     val_dataloader,
                     criterion,
                     device,
+                    qtn_tokenizer,
+                    ans_vocab,
                 )
 
                 if cfg.training.scheduler.isScheduler:
@@ -351,5 +351,4 @@ if __name__ == "__main__":
 
     else:
         train_model()
-        test_categorized_accuracy()
         

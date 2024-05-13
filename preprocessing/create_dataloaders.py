@@ -52,10 +52,10 @@ class Img2MML_dataset(Dataset):
         return img,qtn,torch.Tensor(indexed_ans)
         
 class My_pad_collate(object):
-    def __init__(self, device, max_len):
+    def __init__(self, device, max_len, tokenizer):
         self.device = device
         self.max_len = max_len
-        self.tokenizer = RobertaTokenizer.from_pretrained("FacebookAI/roberta-base")
+        self.tokenizer = tokenizer
 
     def __call__(self, batch):
         _img, _qtns, _ans = zip(*batch)
@@ -142,7 +142,8 @@ def data_loaders(batch_size):
     
     # build vocab 
     print("building questions vocab...")
-    qtn_vocab = RobertaTokenizer.from_pretrained("FacebookAI/roberta-base").get_vocab()
+    qtn_tokenizer = RobertaTokenizer.from_pretrained("FacebookAI/roberta-base")
+    qtn_vocab = qtn_tokenizer.get_vocab()
     with open(f"{cfg.dataset.path_to_data}/vocab.txt", 'w') as f:
         for word, idx in qtn_vocab.items():
             f.write(f"{word} {idx}\n")
@@ -167,7 +168,7 @@ def data_loaders(batch_size):
         vfile.write(f"{vidx} \t {vstr} \n") # build vocab
 
     # initializing pad collate class
-    mypadcollate = My_pad_collate(cfg.general.device, max_len)
+    mypadcollate = My_pad_collate(cfg.general.device, max_len, qtn_tokenizer)
 
     print("building dataloaders...")
 
@@ -242,6 +243,7 @@ def data_loaders(batch_size):
     return (train_dataloader, 
             test_dataloader, 
             val_dataloader, 
+            qtn_tokenizer,
             qtn_vocab, 
             ans_vocab,
             max_len)

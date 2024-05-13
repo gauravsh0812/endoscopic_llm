@@ -4,7 +4,6 @@ from tqdm.auto import tqdm
 
 def train(
     model,
-    data_path, 
     train_dataloader,
     optimizer,
     criterion,
@@ -37,9 +36,10 @@ def train(
             device,
         )
 
-        # print("output shape: ", output.shape)
-        # print("ans shape: ", ans.shape)
+        pred = torch.argmax(output, dim=-1)
 
+        print("q, a, i, o, p shapes: ", qtn_ids.shape, ans.shape, imgs.shape, output.shape, pred.shape)    
+                
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
                          ans.contiguous().view(-1))
         
