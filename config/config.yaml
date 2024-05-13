@@ -23,15 +23,15 @@ training:
     clip: 1 
     batch_size: 16
     epochs: 50
-    dropout: 0.3
-    learning_rate: 0.01
+    dropout: 0.1
+    learning_rate: 0.0001
     weight_decay: 0.00001
     betas: [0.9,0.8]
     early_stopping: 8
     num_classes: 1
   
   scheduler:
-    isScheduler: True
+    isScheduler: False
     verbose: True
     scheduler_step_size: 5
     scheduler_gamma: 0.9

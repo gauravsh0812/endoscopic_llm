@@ -114,7 +114,6 @@ def data_loaders(batch_size):
                     ALL_ANS.append(f"<sos> {token} <eos>")
                     
 
-        print("total number of samples: ", len(ALL_ANS))
         qi_data = {
             "IMG": IMGS,
             "QUESTION": ALL_QTNS,
