@@ -25,6 +25,7 @@ class BiLSTM(nn.Module):
     def forward(self,x):
         x = self.embedding(x)
         x = self.dropout(x)
+        print("lstm shaoe: ", x.shape)
         x = self.lstm(x)
         x = self.fc(x)  # (B, L, output_dim)
 
