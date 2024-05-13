@@ -24,6 +24,9 @@ def train(
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
         
+        ans = torch.stack(ans)
+        ans = ans.to(device)
+
         # setting gradients to zero
         optimizer.zero_grad()
 
@@ -37,7 +40,7 @@ def train(
 
         #print("output shape: ", output.shape)
 
-        print(ans)
+        print(ans.shape)
         exit()
 
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
