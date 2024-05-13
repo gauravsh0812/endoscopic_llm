@@ -24,7 +24,6 @@ class Endoscopic_model(nn.Module):
             imgs,
             qtn_ids,
             qtn_attns,
-            ans,
             device,
         ):
 

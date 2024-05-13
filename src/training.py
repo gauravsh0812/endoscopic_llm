@@ -24,8 +24,7 @@ def train(
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
         
-        ans = torch.stack(ans)
-
+        ans = torch.stack(ans).long()
         ans = ans.to(device)
 
         # setting gradients to zero
@@ -35,7 +34,6 @@ def train(
             imgs,
             qtn_ids,
             qtn_attns,
-            ans,
             device,
         )
 
