@@ -17,6 +17,7 @@ from models.clip import ClipVisionEncoder
 from models.roberta import RobertaEncoder
 from models.model import Endoscopic_model
 from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
+from models.bilstm import BiLSTM
 from src.training import train
 from src.testing import evaluate
 
@@ -45,11 +46,11 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-def define_model(max_len):
+def define_model(max_len, ans_vocab):
     
-    ENC = ClipVisionEncoder(finetune=cfg.training.clip.finetune,
+    CLIPENC = ClipVisionEncoder(finetune=cfg.training.clip.finetune,
                             config=cfg.training.clip.configuration)
-    DEC = RobertaEncoder()    
+    ROBENC = RobertaEncoder()    
 
     if cfg.training.clip.finetune:
         in_dim = cfg.training.clip.configuration.hidden_size
@@ -71,19 +72,28 @@ def define_model(max_len):
         cfg.training.general.num_classes,
     )
 
+    LSTMDEC = BiLSTM(
+        cfg.training.bilstm.in_dim,
+        cfg.training.bilstm.hidden_dim,
+        len(ans_vocab),
+        cfg.training.bilstm.embed_dim,
+        cfg.training.general.dropout,
+    )
+
     # freezing the pre-trained models
     # only training the adaptor layer
-    for param in ENC.parameters():
+    for param in CLIPENC.parameters():
         param.requires_grad = cfg.training.clip.finetune
 
-    for param in DEC.parameters():
+    for param in ROBENC.parameters():
         param.requires_grad = cfg.training.roberta.finetune 
 
-    model = Endoscopic_model(ENC, 
-                            DEC,
+    model = Endoscopic_model(CLIPENC, 
+                            ROBENC,
                             CLIPADA,
                             ROBADA,
-                            PROJ,)
+                            PROJ,
+                            LSTMDEC,)
     return model
 
 def train_model(rank=None):
@@ -116,10 +126,11 @@ def train_model(rank=None):
                 train_dataloader,
                 test_dataloader,
                 val_dataloader,
-                vocab,
+                qtn_vocab,
+                ans_vocab,
                 max_len,
             ) = data_loaders(cfg.training.general.batch_size)
-            model = define_model(max_len).to(device)
+            model = define_model(max_len, ans_vocab).to(device)
 
         elif cfg.general.ddp:
             # create default process group
@@ -131,10 +142,10 @@ def train_model(rank=None):
                 train_dataloader,
                 test_dataloader,
                 val_dataloader,
-                vocab,
+                qtn_vocab, ans_vocab,
                 max_len,
             ) = data_loaders(cfg.training.general.batch_size)
-            model = define_model(max_len)
+            model = define_model(max_len,ans_vocab)
             model = DDP(
                 model.to(f"cuda:{rank}"),
                 device_ids=[rank],
@@ -151,10 +162,10 @@ def train_model(rank=None):
             train_dataloader,
             test_dataloader,
             val_dataloader,
-            vocab,
+            qtn_vocab, ans_vocab,
             max_len,
         ) = data_loaders()
-        model = define_model(max_len).to(device)
+        model = define_model(max_len,ans_vocab).to(device)
 
     print("MODEL: ")
     print(f"The model has {count_parameters(model)} trainable parameters")

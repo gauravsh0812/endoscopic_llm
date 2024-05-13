@@ -4,17 +4,19 @@ import torch.nn as nn
 class Endoscopic_model(nn.Module):
 
     def __init__(self, 
-                 encoder, 
-                 decoder,
+                 clipencoder, 
+                 robertaencoder,
                  clipadaptor,
                  robertaadaptor,
                  projector,
+                 bilstmdecoder,
     ):
         super(Endoscopic_model, self).__init__()
-        self.enc = encoder
+        self.clipenc = clipencoder
+        self.robenc = robertaencoder
         self.clipadaptor = clipadaptor
         self.robertaadaptor = robertaadaptor
-        self.dec = decoder
+        self.dec = bilstmdecoder
         self.projector = projector
 
     def forward(
@@ -30,6 +32,7 @@ class Endoscopic_model(nn.Module):
         last_hidden_roberta = self.dec(qtn_ids, qtn_attns) # (B, max_len, 768)        
         clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
         roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
-        output = self.projector(clipoutput, roboutput) # (B,11)
+        projoutput = self.projector(clipoutput, roboutput) # (B,max,64)
+        final_output = self.dec(projoutput) #
         
-        return output
+        return final_output

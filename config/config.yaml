@@ -1,4 +1,4 @@
-model_name: clip_roberta_adaptor_V2_gelu
+model_name: clip_roberta_adaptor_bilstm_V2_gelu
 general:
   seed: 42
   wandb: False
@@ -17,8 +17,6 @@ dataset:
   vocab_freq: 5
   num_workers: 0
   pin_memory: False
-  image_width: 480
-  image_height: 320
 
 training:
   general:
@@ -56,3 +54,8 @@ training:
       num_channels: 3
       image_size: 224
       patch_size: 32
+  
+  bilstm:
+    in_dim: 64
+    hidden_dim: 64
+    embed_dim: 64

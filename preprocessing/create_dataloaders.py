@@ -124,11 +124,30 @@ def data_loaders(batch_size):
     print("the max length: ", max_len)
     
     # build vocab 
-    print("building vocab...")
-    vocab = RobertaTokenizer.from_pretrained("FacebookAI/roberta-base").get_vocab()
+    print("building questions vocab...")
+    qtn_vocab = RobertaTokenizer.from_pretrained("FacebookAI/roberta-base").get_vocab()
     with open(f"{cfg.dataset.path_to_data}/vocab.txt", 'w') as f:
-        for word, idx in vocab.items():
+        for word, idx in qtn_vocab.items():
             f.write(f"{word} {idx}\n")
+
+     # build vocab
+    print("building answers vocab...")
+
+    counter = Counter()
+    for line in train["ANSWER"]:
+        counter.update(line.split())
+
+    # <unk>, <pad> will be prepended in the vocab file
+    ans_vocab = Vocab(
+        counter,
+        min_freq=cfg.dataset.vocab_freq,
+        specials=["<pad>", "<unk>", "<sos>", "<eos>"],
+    )
+
+    # writing answers vocab file...
+    vfile = open("ans_vocab.txt", "w")
+    for vidx, vstr in ans_vocab.stoi.items():
+        vfile.write(f"{vidx} \t {vstr} \n") # build vocab
 
     # initializing pad collate class
     mypadcollate = My_pad_collate(cfg.general.device, max_len)
@@ -206,5 +225,6 @@ def data_loaders(batch_size):
     return (train_dataloader, 
             test_dataloader, 
             val_dataloader, 
-            vocab, 
+            qtn_vocab, 
+            ans_vocab,
             max_len)
