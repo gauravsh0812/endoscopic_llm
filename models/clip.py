@@ -21,7 +21,7 @@ class ClipVisionEncoder(nn.Module):
         print("devices: ", device)
         for image_path in image_paths:
             image = Image.open(image_path)
-            inputs = self.processor(images=image, return_tensors="pt").to(device)
+            inputs = self.processor(images=image, return_tensors="pt")
             outputs = self.model(**inputs.to(device))
             last_hidden_state = outputs.last_hidden_state
             pooled_output = outputs.pooler_output  # pooled classes states
