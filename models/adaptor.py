@@ -47,7 +47,7 @@ class Projector(nn.Module):
         self.final_lin1 = nn.Linear(features[-1]*2, features[-1])
         # self.final_lin2 = nn.Linear(features[-1]*max_len, num_classes)
         self.gelu = nn.GELU()
-        self.norm = nn.BatchNorm1d(features[-1])
+        self.norm = nn.BatchNorm1d(10)
 
     def forward(self, xc, xr):
         # x_roberta + x
