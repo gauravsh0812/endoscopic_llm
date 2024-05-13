@@ -12,7 +12,7 @@ general:
   load_trained_model_for_testing: False 
 
 dataset:
-  path_to_data: "/data/gauravs/combine_data/"
+  path_to_data: "/data/gauravs/combine_data"
   shuffle: True
   vocab_freq: 5
   num_workers: 0
