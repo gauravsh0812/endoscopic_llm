@@ -23,9 +23,6 @@ def train(
     for i, (imgs, qtn_ids, qtn_attns, ans) in enumerate(tset):
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
-        ans_attns = ans_attns.to(device)
-        ans_ids = ans_ids.to(device)
-        imgs = imgs.to(device)
         
         # setting gradients to zero
         optimizer.zero_grad()
