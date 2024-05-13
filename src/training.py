@@ -39,8 +39,7 @@ def train(
             device,
         )
 
-        #print("output shape: ", output.shape)
-        
+        print("output shape: ", output.shape)
         print("ans shape: ", ans.shape)
         exit()
 
