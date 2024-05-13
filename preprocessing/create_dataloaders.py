@@ -58,26 +58,16 @@ class My_pad_collate(object):
                                 truncation=True,
                                 max_length=self.max_len)
         
-        padded_tokenized_ans = self.tokenizer(
-                                _ans, 
-                                return_tensors="pt",
-                                padding=1,
-                                truncation=True,
-                                max_length=self.max_len)
-        
         # tensors
         _img = torch.Tensor(_img)
         _qtn_input_ids = torch.Tensor(padded_tokenized_qtns["input_ids"])
         _qtn_attn_masks = torch.Tensor(padded_tokenized_qtns["attention_mask"])
-        _ans_input_ids = torch.Tensor(padded_tokenized_ans["input_ids"])
-        _ans_attn_masks = torch.Tensor(padded_tokenized_ans["attention_mask"])
         
         return (
             _img.to(self.device),
             _qtn_input_ids.to(self.device),
             _qtn_attn_masks.to(self.device),
-            _ans_input_ids.to(self.device),
-            _ans_attn_masks.to(self.device),
+            _ans.to(self.device),
         )
     
 def data_loaders(batch_size):
