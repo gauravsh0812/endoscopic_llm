@@ -110,6 +110,7 @@ def data_loaders(batch_size):
                     ALL_ANS.append(f"<sos> {_a} <eos>")
                     IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
 
+        print("total number of samples: ", len(ALL_ANS))
         qi_data = {
             "IMG": IMGS,
             "QUESTION": ALL_QTNS,
