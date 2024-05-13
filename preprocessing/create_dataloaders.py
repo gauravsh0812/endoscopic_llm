@@ -108,7 +108,7 @@ def data_loaders(batch_size):
                 _alist = _a.split(",")
                 if len(_alist) == 1 and _alist[0]!="\n":
                     ALL_QTNS.append(_q)
-                    ALL_ANS.append(f"<sos> {_alist[0].replace("\n","").strip()} <eos>")
+                    ALL_ANS.append(f"<sos> {_alist[0].replace('\n','').strip()} <eos>")
                     IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
 
         print("total number of samples: ", len(ALL_ANS))
