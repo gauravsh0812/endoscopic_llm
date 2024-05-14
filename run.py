@@ -247,7 +247,6 @@ def train_model(rank=None):
                 if val_loss < best_valid_loss:
                     best_valid_loss = val_loss
                     count_es = 0
-                    print(">>>>>>>>>>> RANK >>>>>>> : ", rank)
                     if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0):
                         torch.save(
                             model.state_dict(),
