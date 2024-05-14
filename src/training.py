@@ -22,7 +22,7 @@ def train(
     for i, (imgs, qtn_ids, qtn_attns, ans) in enumerate(tset):
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
-        
+
         ans = torch.stack(ans).long()
         ans = ans.to(device)
 
@@ -38,7 +38,11 @@ def train(
 
         pred = torch.argmax(output, dim=-1)
 
-        print("q, a, i, o, p shapes: ", qtn_ids.shape, ans.shape, imgs.shape, output.shape, pred.shape)    
+        print("q shape: ", qtn_ids.shape)
+        print("a shape: ", ans.shape)
+        print("img shape: ", imgs.shape)
+        print("ouptut shape: ", output.shape)
+        print("pred shape: ", pred.shape)
                 
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
                          ans.contiguous().view(-1))
