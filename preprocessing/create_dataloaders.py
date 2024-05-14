@@ -95,7 +95,7 @@ def data_loaders(batch_size):
     )
 
     for t_idx, t_qtns in enumerate([train_images, test_images, val_images]):
-        QTNS = [questions[num] for num in t_qtns][:50]
+        QTNS = [questions[num] for num in t_qtns]
         IMGS = list()
         ALL_QTNS = list()
         ALL_ANS = list()
