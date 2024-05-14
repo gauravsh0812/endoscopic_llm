@@ -222,7 +222,7 @@ def train_model(rank=None):
                     device,
                     qtn_tokenizer,
                     ans_vocab,
-                    is_test=Truue
+                    is_test=True
                 )
 
                 exit()
