@@ -40,7 +40,6 @@ def train(
 
         print("q shape: ", qtn_ids.shape)
         print("a shape: ", ans.shape)
-        print("img shape: ", imgs.shape)
         print("ouptut shape: ", output.shape)
         print("pred shape: ", pred.shape)
                 
