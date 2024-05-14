@@ -35,13 +35,6 @@ def train(
             qtn_attns,
             device,
         )
-
-        pred = torch.argmax(output, dim=-1)
-
-        print("q shape: ", qtn_ids.shape)
-        print("a shape: ", ans.shape)
-        print("ouptut shape: ", output.shape)
-        print("pred shape: ", pred.shape)
                 
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
                          ans.contiguous().view(-1))

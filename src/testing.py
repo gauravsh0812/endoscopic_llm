@@ -36,22 +36,29 @@ def evaluate(
             
             pred = torch.argmax(output, dim=-1)
 
+            """
+            q shape:  torch.Size([16, 32])
+            a shape:  torch.Size([16, 3])
+            ouptut shape:  torch.Size([16, 3, 52])
+            pred shape:  torch.Size([16, 3])
+            """
+
             loss = criterion(
                 output.contiguous().view(-1, output.shape[-1]), 
                 ans.contiguous().view(-1))
 
             epoch_loss += loss.item()
             
-            if is_test:
-                # for b in imgs.shape[0]:
-                    
-                for i,q,a,p in zip(imgs,qtn_ids,ans,pred):
-                    qtn = qtn_tokenizer.decode(q)
-                    
-
-                    labels_file.write(
-                        f"{i} \t {qtn} \t {a} \t {p}"
-                    )
+            # if is_test:
+            for b in ans.shape[0]:
+                q = qtn_tokenizer.decode(qtn_ids[b,:])
+                a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
+                p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
+                
+                labels_file.write(
+                    f"{i} \t {q} \t {a} \t {p} \n"
+                )
+        
 
         net_loss = epoch_loss / len(test_dataloader)
         accuracy = accuracy / len(test_dataloader)

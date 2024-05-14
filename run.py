@@ -224,6 +224,8 @@ def train_model(rank=None):
                     ans_vocab,
                 )
 
+                exit()
+                
                 if cfg.training.scheduler.isScheduler:
                     scheduler.step()
 
