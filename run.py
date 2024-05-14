@@ -215,17 +215,14 @@ def train_model(rank=None):
                     rank=rank,
                 )
 
-                val_loss, accuracy = evaluate(
+                val_loss = evaluate(
                     model,
                     val_dataloader,
                     criterion,
                     device,
                     qtn_tokenizer,
                     ans_vocab,
-                    is_test=True
                 )
-
-                exit()
 
                 if cfg.training.scheduler.isScheduler:
                     scheduler.step()
@@ -234,7 +231,6 @@ def train_model(rank=None):
                     if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0): 
                         wandb.log({"train_loss": train_loss})
                         wandb.log({"val_loss": val_loss})
-                        wandb.log({"accuracy": accuracy})
 
                 end_time = time.time()
                 # total time spent on training an epoch
@@ -273,9 +269,6 @@ def train_model(rank=None):
                     print(
                         f"\t Val. Loss: {val_loss:.3f} |  Val. PPL: {math.exp(val_loss):7.3f}"
                     )
-                    print(
-                        f"\t Val. Accuracy: {accuracy:.3f}"
-                    )
 
                     loss_file.write(
                         f"Epoch: {epoch+1:02} | Time: {epoch_mins}m {epoch_secs}s\n"
@@ -286,10 +279,7 @@ def train_model(rank=None):
                     loss_file.write(
                         f"\t Val. Loss: {val_loss:.3f} |  Val. PPL: {math.exp(val_loss):7.3f}\n"
                     )
-                    loss_file.write(
-                        f"\t Val. Accuracy: {accuracy:.3f}\n"
-                    )
-
+                    
             else:
                 print(
                     f"Terminating the training process as the validation loss hasn't been reduced from last {cfg.training.general.early_stopping} epochs."
@@ -317,21 +307,22 @@ def train_model(rank=None):
         )
     )
 
-    test_loss, accuracy = evaluate(
+    test_loss = evaluate(
         model,
-        cfg.dataset.path_to_data,
         test_dataloader,
         criterion,
         device,
+        qtn_tokenizer,
+        ans_vocab,
         is_test=True,
     )
 
     if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0):
         print(
-            f"| Test Loss: {test_loss:.3f} | Test PPL: {math.exp(test_loss):7.3f} | Test Accuracy: {accuracy: .3f}"
+            f"| Test Loss: {test_loss:.3f} | Test PPL: {math.exp(test_loss):7.3f}"
         )
         loss_file.write(
-            f"| Test Loss: {test_loss:.3f} | Test PPL: {math.exp(test_loss):7.3f} | Test Accuracy: {accuracy: .3f}"
+            f"| Test Loss: {test_loss:.3f} | Test PPL: {math.exp(test_loss):7.3f}"
         )
 
     # stopping time

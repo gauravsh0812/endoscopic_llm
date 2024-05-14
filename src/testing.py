@@ -13,7 +13,6 @@ def evaluate(
 ):
     model.eval()
     epoch_loss = 0
-    accuracy = 0
 
     if is_test:
         labels_file = open("logs/predictions.txt","w")
@@ -51,15 +50,15 @@ def evaluate(
             
             if is_test:
                 for b in range(ans.shape[0]):
+                    im = imgs[b]
                     q = qtn_tokenizer.decode(qtn_ids[b,:])
                     a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
                     p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
                     
                     labels_file.write(
-                        f"{i} \t {q} \t {a} \t {p} \n"
+                        f"{im} \t {q} \t {a} \t {p} \n"
                     )
             
 
         net_loss = epoch_loss / len(test_dataloader)
-        accuracy = accuracy / len(test_dataloader)
-        return net_loss, accuracy   
+        return net_loss   
