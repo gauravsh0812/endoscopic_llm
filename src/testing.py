@@ -49,16 +49,16 @@ def evaluate(
 
             epoch_loss += loss.item()
             
-            # if is_test:
-            for b in range(ans.shape[0]):
-                q = qtn_tokenizer.decode(qtn_ids[b,:])
-                a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
-                p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
-                
-                labels_file.write(
-                    f"{i} \t {q} \t {a} \t {p} \n"
-                )
-        
+            if is_test:
+                for b in range(ans.shape[0]):
+                    q = qtn_tokenizer.decode(qtn_ids[b,:])
+                    a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
+                    p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
+                    
+                    labels_file.write(
+                        f"{i} \t {q} \t {a} \t {p} \n"
+                    )
+            
 
         net_loss = epoch_loss / len(test_dataloader)
         accuracy = accuracy / len(test_dataloader)

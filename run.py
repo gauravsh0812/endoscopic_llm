@@ -222,10 +222,11 @@ def train_model(rank=None):
                     device,
                     qtn_tokenizer,
                     ans_vocab,
+                    is_test=Truue
                 )
 
                 exit()
-                
+
                 if cfg.training.scheduler.isScheduler:
                     scheduler.step()
 
