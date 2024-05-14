@@ -50,7 +50,7 @@ def evaluate(
             epoch_loss += loss.item()
             
             # if is_test:
-            for b in ans.shape[0]:
+            for b in range(ans.shape[0]):
                 q = qtn_tokenizer.decode(qtn_ids[b,:])
                 a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
                 p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
