@@ -20,6 +20,7 @@ from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
 from models.bilstm import BiLSTM
 from src.training import train
 from src.testing import evaluate
+from utils import *
 
 with open("config/config.yaml") as f:
     cfg = Box(yaml.safe_load(f))
@@ -341,4 +342,6 @@ if __name__ == "__main__":
 
     else:
         train_model()
+        # calculate accuracy (from utils.py)
+        accuracy()
         
