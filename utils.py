@@ -9,6 +9,7 @@ def accuracy():
         _,_,tgt,pred = l.replace("\n","").split("\t")
         tgt = tgt.replace("<sos>","").replace("<eos>","").strip()
         pred = pred.replace("<sos>","").replace("<eos>","").strip()
+        print(f"{tgt} \t {pred}")
         if tgt == pred:
             count += 1
 
