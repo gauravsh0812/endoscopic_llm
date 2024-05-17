@@ -13,6 +13,7 @@ def accuracy():
             print(f"{tgt} \t {pred}")
             count += 1
 
+    print(count)
     print("Accuracy: ", count/total)
 
 accuracy()
