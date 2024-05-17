@@ -13,3 +13,5 @@ def accuracy():
             count += 1
 
     print("Accuracy: ", count/total)
+
+accuracy()
