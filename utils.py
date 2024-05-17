@@ -1,7 +1,7 @@
 import os
 
 def accuracy():
-    logfile = open("logs/predictions.lst").readlines()
+    logfile = open("logs/predictions.txt").readlines()
 
     total = len(logfile)
     count = 0
