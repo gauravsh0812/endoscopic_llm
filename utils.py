@@ -10,10 +10,10 @@ def accuracy():
         tgt = tgt.replace("<sos>","").replace("<eos>","").strip()
         pred = pred.replace("<sos>","").replace("<eos>","").strip()
         if tgt == pred:
-            print(f"{tgt} \t {pred}")
             count += 1
 
-    print(count)
+    print("correct: ", count)
+    print("total: ", total)
     print("Accuracy: ", count/total)
 
 accuracy()
