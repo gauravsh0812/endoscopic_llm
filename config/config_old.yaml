@@ -17,9 +17,6 @@ dataset:
   vocab_freq: 5
   num_workers: 0
   pin_memory: False
-  labels: ["Abdominal_wall_cavity", "liver", "cystic_plate", "red", "brown", 
-          "silver", "instrument", "anatomy", "grasper", "gallbladder", "omentum", 
-          "white", "yellow", "gut", "hook"]
 
 training:
   general:
