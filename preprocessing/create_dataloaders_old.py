@@ -41,14 +41,21 @@ class Img2MML_dataset(Dataset):
         qtn = self.dataframe.iloc[index, 1]
         img = self.dataframe.iloc[index, 0] 
         ans = self.dataframe.iloc[index,2]
-        return img,qtn,ans
+
+        indexed_ans = []
+        for token in ans.split():
+            if self.ans_vocab.stoi[token] is not None:
+                indexed_ans.append(self.ans_vocab.stoi[token])
+            else:
+                indexed_ans.append(self.ans_vocab.stoi["<unk>"])
+
+        return img,qtn,torch.Tensor(indexed_ans)
         
 class My_pad_collate(object):
-    def __init__(self, device, max_len, tokenizer, ans_vocab):
+    def __init__(self, device, max_len, tokenizer):
         self.device = device
         self.max_len = max_len
         self.tokenizer = tokenizer
-        self.ans_vocab = ans_vocab
 
     def __call__(self, batch):
         _img, _qtns, _ans = zip(*batch)
@@ -60,20 +67,15 @@ class My_pad_collate(object):
                                 truncation=True,
                                 max_length=self.max_len)
         
-        # qtn tensors
+        # tensors
         _qtn_input_ids = torch.Tensor(padded_tokenized_qtns["input_ids"])
         _qtn_attn_masks = torch.Tensor(padded_tokenized_qtns["attention_mask"])
-
-        # ans tensors
-        ans = [] 
-        for _a in _ans:
-            ans.append(int(self.ans_vocab.stoi[_a]))
-
+        
         return (
             _img,
             _qtn_input_ids.to(self.device),
             _qtn_attn_masks.to(self.device),
-            ans,
+            _ans,
         )
     
 def data_loaders(batch_size):
@@ -83,9 +85,6 @@ def data_loaders(batch_size):
     questions = os.listdir(f"{cfg.dataset.path_to_data}/questions")
     answers = os.listdir(f"{cfg.dataset.path_to_data}/answers")
     questions_num = range(0, len(questions))
-
-    target_labels = cfg.dataset.labels
-    print(target_labels)
 
     # split the image_num into train, test, validate
     train_val_images, test_images = train_test_split(
@@ -108,18 +107,19 @@ def data_loaders(batch_size):
                 # keeping qtns thhat has one word answer only
                 _alist = _a.split(",")
                 if len(_alist) == 1 and _alist[0]!="\n":
+                    IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
+                    ALL_QTNS.append(_q.replace("\n",""))
+
                     token = _alist[0].replace('\n','').strip()
-                    if token in target_labels:
-                        IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
-                        ALL_QTNS.append(_q.replace("\n",""))
-                        ALL_ANS.append(token)
-            
+                    ALL_ANS.append(f"<sos> {token} <eos>")
+                    
+
         qi_data = {
             "IMG": IMGS,
             "QUESTION": ALL_QTNS,
             "ANSWER": ALL_ANS
         }
-
+    
         if t_idx == 0:
             train = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
         elif t_idx == 1:
@@ -132,11 +132,6 @@ def data_loaders(batch_size):
     test.to_csv(f"{cfg.dataset.path_to_data}/test.csv", index=False)
     val.to_csv(f"{cfg.dataset.path_to_data}/val.csv", index=False)
     
-    N = int(cfg.dataset.sample_size)
-    train = train[:N]
-    test = test[:int(N*0.1)]
-    val = val[:int(N*0.1)]
-
     print("training dataset size: ", len(train))
     print("testing dataset size: ", len(test))
     print("validation dataset size: ", len(val))
@@ -153,7 +148,7 @@ def data_loaders(batch_size):
         for word, idx in qtn_vocab.items():
             f.write(f"{word} {idx}\n")
 
-    # build ans vocab
+     # build vocab
     print("building answers vocab...")
 
     counter = Counter()
@@ -161,7 +156,11 @@ def data_loaders(batch_size):
         counter.update(line.split())
 
     # <unk>, <pad> will be prepended in the vocab file
-    ans_vocab = Vocab(counter)
+    ans_vocab = Vocab(
+        counter,
+        min_freq=cfg.dataset.vocab_freq,
+        specials=["<pad>", "<unk>", "<sos>", "<eos>"],
+    )
 
     # writing answers vocab file...
     vfile = open("ans_vocab.txt", "w")
@@ -169,7 +168,7 @@ def data_loaders(batch_size):
         vfile.write(f"{vidx} \t {vstr} \n") # build vocab
 
     # initializing pad collate class
-    mypadcollate = My_pad_collate(cfg.general.device, max_len, qtn_tokenizer, ans_vocab)
+    mypadcollate = My_pad_collate(cfg.general.device, max_len, qtn_tokenizer)
 
     print("building dataloaders...")
 
