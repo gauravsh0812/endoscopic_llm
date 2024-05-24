@@ -15,5 +15,3 @@ def accuracy():
     print("correct: ", count)
     print("total: ", total)
     print("Accuracy: ", count/total)
-
-accuracy()
