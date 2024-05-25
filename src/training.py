@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import torch
+import torch, os
 from tqdm.auto import tqdm
 
 def train(
@@ -25,11 +25,19 @@ def train(
 
         ans = torch.tensor(ans).long().to(device)
 
+        _imgs = []
+        for i in imgs:
+            name = os.path.basename(i).split(".")
+            tnsr = torch.load(f"/data/gauravs/combine_data/clip_image_tensors/{name}.pt").squeeze(0)
+            _imgs.append(tnsr)
+        
+        _imgs = torch.stack(_imgs).to(device)
+
         # setting gradients to zero
         optimizer.zero_grad()
 
         output = model(
-            imgs,
+            _imgs,
             qtn_ids,
             qtn_attns,
             device,
