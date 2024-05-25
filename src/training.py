@@ -23,8 +23,6 @@ def train(
         qtn_attns = qtn_attns.to(device)
         qtn_ids = qtn_ids.to(device)
 
-        print(ans)
-
         ans = torch.tensor(ans).long().to(device)
 
         # setting gradients to zero
@@ -36,7 +34,9 @@ def train(
             qtn_attns,
             device,
         )
-                
+        
+        print(output.contiguous().view(-1, output.shape[-1]), ans)
+        
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
                          ans.contiguous().view(-1))
         
