@@ -2,9 +2,9 @@ model_name: clip_roberta_adaptor_bilstm_V2_gelu
 general:
   seed: 42
   wandb: False
-  ddp: False
+  ddp: True
   ncpus: 8
-  gpus: 0
+  gpus: 0,1,2,3
   world_size: 4
   rank: 0
   device: "cuda"
@@ -15,7 +15,7 @@ dataset:
   path_to_data: "/data/gauravs/combine_data"
   shuffle: True
   vocab_freq: 5
-  sample_size: 40000
+  sample_size: 1000
   num_workers: 0
   pin_memory: False
   labels: ["Abdominal_wall_cavity", "liver", "cystic_plate", "red", "brown", 
@@ -26,7 +26,7 @@ training:
   general:
     clip: 1 
     batch_size: 16
-    epochs: 50
+    epochs: 1
     dropout: 0.1
     learning_rate: 0.0001
     weight_decay: 0.00001
