@@ -27,7 +27,7 @@ def train(
 
         _imgs = []
         for i in imgs:
-            name = os.path.basename(i).split(".")
+            name = os.path.basename(i).split(".")[0]
             tnsr = torch.load(f"/data/gauravs/combine_data/clip_image_tensors/{name}.pt").squeeze(0)
             _imgs.append(tnsr)
         
