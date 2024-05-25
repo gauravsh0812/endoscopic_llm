@@ -69,7 +69,7 @@ def define_model(max_len, ans_vocab):
     PROJ = Projector(
         cfg.training.adaptor.features,
         max_len, 
-        cfg.training.general.num_classes,
+        len(ans_vocab),
     )
 
     # freezing the pre-trained models
