@@ -240,8 +240,7 @@ def train_model(rank=None):
                 if val_loss < best_valid_loss:
                     best_valid_loss = val_loss
                     count_es = 0
-                    # if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0):
-                    if rank==0:
+                    if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0):                    
                         torch.save(
                             model.state_dict(),
                             f"trained_models/clip_roberta_adaptor_best_model.pt",
