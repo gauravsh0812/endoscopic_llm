@@ -214,6 +214,8 @@ def train_model(rank=None):
                     qtn_tokenizer,
                     ans_vocab,
                 )
+                
+                time.sleep(3)
 
                 if cfg.training.scheduler.isScheduler:
                     scheduler.step()
@@ -236,6 +238,7 @@ def train_model(rank=None):
                     )
 
                 if val_loss < best_valid_loss:
+                    print("val loss < best one...")
                     best_valid_loss = val_loss
                     count_es = 0
                     if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0):
