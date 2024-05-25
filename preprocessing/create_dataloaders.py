@@ -132,10 +132,10 @@ def data_loaders(batch_size):
     test.to_csv(f"{cfg.dataset.path_to_data}/test.csv", index=False)
     val.to_csv(f"{cfg.dataset.path_to_data}/val.csv", index=False)
     
-    N = int(cfg.dataset.sample_size)
-    train = train[:N]
-    test = test[:int(N*0.1)]
-    val = val[:int(N*0.1)]
+    # N = int(cfg.dataset.sample_size)
+    # train = train[:N]
+    # test = test[:int(N*0.1)]
+    # val = val[:int(N*0.1)]
 
     print("training dataset size: ", len(train))
     print("testing dataset size: ", len(test))
