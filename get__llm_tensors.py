@@ -13,4 +13,4 @@ for i in tset:
     img = f"{image_path}/{i}"
     tnsr = CLIPENC(img, "cuda:0")
     
-    torch.save(f"/data/gauravs/combine_data/clip_image_tensors/{int(i.split('.')[0])}.pt")
+    torch.save(tsnr, f"/data/gauravs/combine_data/clip_image_tensors/{int(i.split('.')[0])}.pt")
