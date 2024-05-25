@@ -9,14 +9,12 @@ class Endoscopic_model(nn.Module):
                  clipadaptor,
                  robertaadaptor,
                  projector,
-                 bilstmdecoder,
     ):
         super(Endoscopic_model, self).__init__()
         self.clipenc = clipencoder
         self.robenc = robertaencoder
         self.clipadaptor = clipadaptor
         self.robertaadaptor = robertaadaptor
-        self.dec = bilstmdecoder
         self.projector = projector
 
     def forward(

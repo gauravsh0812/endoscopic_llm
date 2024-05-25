@@ -72,12 +72,6 @@ def define_model(max_len, ans_vocab):
         cfg.training.general.num_classes,
     )
 
-    LSTMDEC = BiLSTM(
-        cfg.training.bilstm.in_dim,
-        cfg.training.bilstm.hidden_dim,
-        len(ans_vocab),
-    )
-
     # freezing the pre-trained models
     # only training the adaptor layer
     for param in CLIPENC.parameters():
@@ -90,8 +84,7 @@ def define_model(max_len, ans_vocab):
                             ROBENC,
                             CLIPADA,
                             ROBADA,
-                            PROJ,
-                            LSTMDEC,)
+                            PROJ,)
     return model
 
 def train_model(rank=None):
