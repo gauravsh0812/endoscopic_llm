@@ -22,9 +22,8 @@ def evaluate(
         for i, (imgs, qtn_ids, qtn_attns, ans) in enumerate(test_dataloader):
             qtn_attns = qtn_attns.to(device)
             qtn_ids = qtn_ids.to(device)
-        
-            ans = torch.stack(ans).long()
-            ans = ans.to(device)
+    
+            ans = torch.tensor(ans).long().to(device)
 
             output = model(
                 imgs,
