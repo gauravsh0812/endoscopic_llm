@@ -215,7 +215,7 @@ def train_model(rank=None):
                     ans_vocab,
                 )
 
-                pause_ddp_for_collection()
+                if cfg.general.ddp: pause_ddp_for_collection()
 
                 if cfg.training.scheduler.isScheduler:
                     scheduler.step()
