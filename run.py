@@ -87,7 +87,7 @@ def define_model(max_len, ans_vocab):
                             PROJ,)
     return model
 
-def train_model(rank=0):
+def train_model(rank=None):
 
     if (cfg.general.wandb):
         if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0): 
