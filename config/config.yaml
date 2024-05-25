@@ -15,7 +15,7 @@ dataset:
   path_to_data: "/data/gauravs/combine_data"
   shuffle: True
   vocab_freq: 5
-  sample_size: 1000
+  sample_size: 25000
   num_workers: 0
   pin_memory: False
   labels: ["Abdominal_wall_cavity", "liver", "cystic_plate", "red", "brown", 
