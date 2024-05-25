@@ -2,7 +2,7 @@ import os, torch, tqdm
 from models.clip import ClipVisionEncoder
 from models.roberta import RobertaEncoder
 
-CLIPENC = ClipVisionEncoder()
+CLIPENC = ClipVisionEncoder().to("cuda:0")
 # ROBENC = RobertaEncoder()   
 
 image_path = "/data/gauravs/combine_data/images"
