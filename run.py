@@ -17,7 +17,6 @@ from models.clip import ClipVisionEncoder
 from models.roberta import RobertaEncoder
 from models.model import Endoscopic_model
 from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
-from models.bilstm import BiLSTM
 from src.training import train
 from src.testing import evaluate
 from utils import *
