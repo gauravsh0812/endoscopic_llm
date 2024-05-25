@@ -35,8 +35,6 @@ def train(
             device,
         )
         
-        print(output.shape, ans.shape)
-        
         loss = criterion(output.contiguous().view(-1, output.shape[-1]), 
                          ans.contiguous().view(-1))
         
