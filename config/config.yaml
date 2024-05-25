@@ -1,4 +1,4 @@
-model_name: clip_roberta_adaptor_bilstm_V2_gelu
+model_name: clip_roberta_adaptor_clf
 general:
   seed: 42
   wandb: False

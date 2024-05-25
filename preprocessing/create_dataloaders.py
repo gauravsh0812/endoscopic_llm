@@ -204,15 +204,7 @@ def data_loaders(batch_size):
     imml_val = Img2MML_dataset(val, ans_vocab)
 
     if cfg.general.ddp:
-        # val_sampler = SequentialSampler(imml_val)
-        # sampler = val_sampler
-        # shuffle = False
-        val_sampler = DistributedSampler(
-            dataset=imml_val,
-            num_replicas=cfg.general.world_size,
-            rank=cfg.general.rank,
-            shuffle=cfg.dataset.shuffle,
-        )
+        val_sampler = SequentialSampler(imml_val)
         sampler = val_sampler
         shuffle = False
     else:
