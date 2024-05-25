@@ -25,8 +25,7 @@ def train(
 
         print(ans)
 
-        ans = torch.stack(ans).long()
-        ans = ans.to(device)
+        ans = torch.tensor(ans).long().to(device)
 
         # setting gradients to zero
         optimizer.zero_grad()
