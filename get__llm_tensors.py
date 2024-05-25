@@ -1,4 +1,4 @@
-import os, torch
+import os, torch, tqdm
 from models.clip import ClipVisionEncoder
 from models.roberta import RobertaEncoder
 
@@ -8,7 +8,8 @@ CLIPENC = ClipVisionEncoder()
 image_path = "/data/gauravs/combine_data/images"
 # qtn_path = "/data/gauravs/combine_data/questions"
 
-for i in os.listdir(image_path):
+tset = tqdm.tqdm(os.listdir(image_path))
+for i in tset:
     img = f"{image_path}/{i}"
     tnsr = CLIPENC(img, "cuda:0")
     
