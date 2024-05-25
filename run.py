@@ -215,7 +215,7 @@ def train_model(rank=None):
                     ans_vocab,
                 )
 
-                dist.barrier()
+                pause_ddp_for_collection()
 
                 if cfg.training.scheduler.isScheduler:
                     scheduler.step()
@@ -320,6 +320,23 @@ def train_model(rank=None):
 
     # stopping time
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))
+
+def pause_ddp_for_collection():
+    # Get the rank of the current process
+    rank = dist.get_rank()
+
+    # Print the rank for debugging
+    print(f"Process rank: {rank}")
+
+    # Synchronize all processes
+    dist.barrier()
+
+    if rank == 0:  # Only core 0 should print the message
+        print("Pausing for 3 seconds to collect everything on core 0...")
+    time.sleep(3)
+
+    # Synchronize all processes again
+    dist.barrier()
 
 
 def ddp_main(world_size,):    
