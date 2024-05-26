@@ -40,6 +40,8 @@ training:
     scheduler_gamma: 0.9
   
   adaptor:
+    __: choose fusion from ["concat","bilinear","cross_attn"]
+    fusion: bilinear
     features: [512,256,128,64]
 
   roberta:

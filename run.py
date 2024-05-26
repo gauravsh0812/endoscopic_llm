@@ -67,6 +67,7 @@ def define_model(max_len, ans_vocab):
     )
     
     PROJ = Projector(
+        cfg.training.adaptor.fusion,
         cfg.training.adaptor.features,
         max_len, 
         len(ans_vocab),

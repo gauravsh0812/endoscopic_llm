@@ -42,24 +42,39 @@ class RobertaAdaptor(nn.Module):
 
 class Projector(nn.Module):
 
-    def __init__(self, features, max_len, num_classes):
+    def __init__(self, fusion, features, max_len, num_classes):
         super(Projector, self).__init__()
-        self.final_lin1 = nn.Linear(max_len*2, max_len)
-        self.final_lin2 = nn.Linear(max_len*features[-1], features[-1])
-        self.final_lin3 = nn.Linear(features[-1], num_classes)
+        self.fusion = fusion
+        if self.fusion == "concat":
+            self.final_lin1 = nn.Linear(max_len*2, max_len)
+            self.attn = Self_Attention(features[-1])
+            self.final_lin2 = nn.Linear(max_len*features[-1], features[-1])
+            self.final_lin3 = nn.Linear(features[-1], num_classes)
+            self.norm = nn.BatchNorm1d(features[-1])
+
+        elif self.fusion == "bilinear":
+            self.attn = Self_Attention(max_len)
+            self.final_lin1 = nn.Linear(max_len*max_len, num_classes)
+
         self.gelu = nn.GELU()
-        self.norm = nn.BatchNorm1d(features[-1])
-        self.attn = Self_Attention(features[-1])
         self.pool = nn.MaxPool1d(1)
 
     def forward(self, xc, xr):
         # x_roberta + x
-        x = torch.cat((xc,xr), dim=1)  
-        x = self.gelu(self.norm(self.final_lin1(x.permute(0,2,1)))).permute(0,2,1)
-        x = self.attn(x)
-        x = torch.flatten(x, -2,-1)   # (B,max_len*64)
-        x = self.gelu(self.final_lin2(x))  # (B, 64)
-        x = self.gelu(self.final_lin3(x))  # (B, num_classes)
+        if self.fusion == "concat":
+            x = torch.cat((xc,xr), dim=1)  
+            x = self.gelu(self.norm(self.final_lin1(x.permute(0,2,1)))).permute(0,2,1)
+            x = self.attn(x)
+            x = torch.flatten(x, -2,-1)   # (B,max_len*64)
+            x = self.gelu(self.final_lin2(x))  # (B, 64)
+            x = self.gelu(self.final_lin3(x))  # (B, num_classes)
+        
+        elif self.fusion == "bilinear":
+            x = torch.bmm(xc, xr)  # (B, max, max)
+            x = self.attn(x)
+            x = torch.flatten(x,-2,-1) # (B, max*max)
+            x = self.gelu(self.final_lin1(x))  # (B, num_classes)
+        
         x = self.pool(x)
 
         return x   # (B,num_classes)
