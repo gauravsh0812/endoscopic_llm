@@ -50,6 +50,7 @@ class Projector(nn.Module):
         self.gelu = nn.GELU()
         self.norm = nn.BatchNorm1d(features[-1])
         self.attn = Self_Attention(features[-1])
+        self.pool = nn.MaxPool1d(1)
 
     def forward(self, xc, xr):
         # x_roberta + x
@@ -59,6 +60,7 @@ class Projector(nn.Module):
         x = torch.flatten(x, -2,-1)   # (B,max_len*64)
         x = self.gelu(self.final_lin2(x))  # (B, 64)
         x = self.gelu(self.final_lin3(x))  # (B, num_classes)
+        x = self.pool(x)
 
         return x   # (B,num_classes)
 
