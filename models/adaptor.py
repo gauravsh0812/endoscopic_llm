@@ -70,7 +70,7 @@ class Projector(nn.Module):
             x = self.gelu(self.final_lin3(x))  # (B, num_classes)
         
         elif self.fusion == "bilinear":
-            print("xc xr shape: ", xc.shape, xr.shape)
+            
             x = torch.bmm(xc, xr.permute(0,2,1))  # (B, max, max)
             x = self.attn(x)
             x = torch.flatten(x,-2,-1) # (B, max*max)
