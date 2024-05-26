@@ -27,9 +27,9 @@ training:
     clip: 1 
     batch_size: 20
     epochs: 50
-    dropout: 0.3
-    learning_rate: 0.0001
-    weight_decay: 0.00001
+    dropout: 0.4
+    learning_rate: 0.00001
+    weight_decay: 0.00005
     betas: [0.9,0.8]
     early_stopping: 7
   
