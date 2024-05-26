@@ -30,7 +30,7 @@ training:
     dropout: 0.3
     learning_rate: 0.001
     weight_decay: 0.0005
-    betas: [0.9,0.6]
+    betas: [0.9,0.999]
     early_stopping: 7
   
   scheduler:
