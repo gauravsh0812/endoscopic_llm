@@ -21,7 +21,7 @@ from src.training import train
 from src.testing import evaluate
 from utils import *
 
-with open("config/config.yaml") as f:
+with open("config/config_sgpt.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 def set_random_seed(SEED):
@@ -48,8 +48,7 @@ def epoch_time(start_time, end_time):
 
 def define_model(max_len, ans_vocab):
     
-    CLIPENC = ClipVisionEncoder(finetune=cfg.training.clip.finetune,
-                            config=cfg.training.clip.configuration)
+    CLIPENC = ClipVisionEncoder()
     ROBENC = RobertaEncoder()    
 
     if cfg.training.clip.finetune:

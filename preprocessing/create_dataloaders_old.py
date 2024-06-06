@@ -2,9 +2,6 @@ import os
 import yaml
 import pandas as pd
 import torch
-import multiprocessing
-from PIL import Image
-from torchvision import transforms
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader, DistributedSampler
 from collections import Counter
@@ -70,7 +67,7 @@ class My_pad_collate(object):
         # ans tensors
         ans = [] 
         for _a in _ans:
-            ans.append(int(self.ans_vocab[_a]))
+            ans.append(int(self.ans_vocab.stoi[_a]))
 
         return (
             _img,
@@ -78,29 +75,17 @@ class My_pad_collate(object):
             _qtn_attn_masks.to(self.device),
             ans,
         )
-
-def img_tnsr(im):
-    num = int(im.split(".")[0])
-    if not os.path.exists(f"{cfg.dataset.path_to_data}/image_tensors/{num}.pt"):
-        IMAGE = Image.open(f"{cfg.dataset.path_to_data}/images/{im}")
-        convert = transforms.ToTensor()
-        IMAGE = convert(IMAGE).numpy()
-        torch.save(IMAGE, f"{cfg.dataset.path_to_data}/image_tensors/{num}.pt")
-
+    
 def data_loaders(batch_size):
 
     print("creating dataloaders...")
     
-    N = int(cfg.dataset.sample_size)
-
-    questions = open(f"{cfg.dataset.path_to_data}/questions.lst").readlines()
-    answers = open(f"{cfg.dataset.path_to_data}/answers.lst").readlines()
-    questions_num = range(0, len(questions))[:N]
-
-    assert len(questions) == len(answers)
+    questions = os.listdir(f"{cfg.dataset.path_to_data}/questions")
+    answers = os.listdir(f"{cfg.dataset.path_to_data}/answers")
+    questions_num = range(0, len(questions))
 
     target_labels = cfg.dataset.labels
-    print("taget labels: ", target_labels)
+    print(target_labels)
 
     # split the image_num into train, test, validate
     train_val_images, test_images = train_test_split(
@@ -110,58 +95,47 @@ def data_loaders(batch_size):
         train_val_images, test_size=0.1, random_state=42
     )
 
-    for t_idx, t_df in enumerate([train_images, test_images, val_images]):
+    for t_idx, t_qtns in enumerate([train_images, test_images, val_images]):
+        QTNS = [questions[num] for num in t_qtns]
         IMGS = list()
         ALL_QTNS = list()
         ALL_ANS = list()
-        for i in t_df:
-            n, txt = questions[i].split("\t")
-            n = n.strip().replace("QTN","")
-            IMGS.append(f"{cfg.dataset.path_to_data}/{n}.png")
-            ALL_QTNS.append(txt.replace("\n",""))
-            ALL_ANS.append(answers[i].replace("\n",""))
-        
-        # reshuffling the lists to avoid repeating images in a batch
+        for _Q in QTNS:
+            _idx = int(_Q.split(".")[0].split("_")[1])
+            _qtns = open(f"{cfg.dataset.path_to_data}/questions/question_{_idx}.lst").readlines()
+            _ans = open(f"{cfg.dataset.path_to_data}/answers/answer_{_idx}.lst").readlines()
+            for _q,_a in zip(_qtns,_ans):
+                # keeping qtns thhat has one word answer only
+                _alist = _a.split(",")
+                if len(_alist) == 1 and _alist[0]!="\n":
+                    token = _alist[0].replace('\n','').strip()
+                    if token in target_labels:
+                        IMGS.append(f"{cfg.dataset.path_to_data}/images/{_idx}.png")
+                        ALL_QTNS.append(_q.replace("\n",""))
+                        ALL_ANS.append(token)
+            
         qi_data = {
             "IMG": IMGS,
             "QUESTION": ALL_QTNS,
             "ANSWER": ALL_ANS
         }
 
-        # creating image_tensors;
-        if cfg.dataset.create_image_tensors:
-            os.makedirs(f"{cfg.dataset.path_to_data}/image_tensors", exist_ok=True)
-            with multiprocessing.Pool(cfg.dataset.cpu_count) as pool:
-                pool.map(img_tnsr, IMGS) 
-
         if t_idx == 0:
             train = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
-
-            # shuffling multiple times
-            train = train.sample(frac=1, random_state=42)
-            train = train.sample(frac=1, random_state=42)
-            train = train.sample(frac=1, random_state=42)
-
         elif t_idx == 1:
             test = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
-
-            # shuffling multiple times
-            test = test.sample(frac=1, random_state=42)
-            test = test.sample(frac=1, random_state=42)
-            test = test.sample(frac=1, random_state=42)
-
         else:
             val = pd.DataFrame(qi_data, columns=["IMG", "QUESTION", "ANSWER"])
-            
-            # shuffling multiple times
-            val = val.sample(frac=1, random_state=42)
-            val = val.sample(frac=1, random_state=42)
-            val = val.sample(frac=1, random_state=42)
-
+    
     print(f"saving dataset files to {cfg.dataset.path_to_data}/ folder...")
     train.to_csv(f"{cfg.dataset.path_to_data}/train.csv", index=False)
     test.to_csv(f"{cfg.dataset.path_to_data}/test.csv", index=False)
     val.to_csv(f"{cfg.dataset.path_to_data}/val.csv", index=False)
+    
+    # N = int(cfg.dataset.sample_size)
+    # train = train[:N]
+    # test = test[:int(N*0.1)]
+    # val = val[:int(N*0.1)]
 
     print("training dataset size: ", len(train))
     print("testing dataset size: ", len(test))
@@ -179,13 +153,19 @@ def data_loaders(batch_size):
         for word, idx in qtn_vocab.items():
             f.write(f"{word} {idx}\n")
 
-    ans_vocab = {}
-    for i,l in enumerate(cfg.dataset.labels):
-        ans_vocab[l] = i
+    # build ans vocab
+    print("building answers vocab...")
+
+    counter = Counter()
+    for line in train["ANSWER"]:
+        counter.update(line.split())
+
+    # <unk>, <pad> will be prepended in the vocab file
+    ans_vocab = Vocab(counter)
 
     # writing answers vocab file...
     vfile = open("ans_vocab.txt", "w")
-    for vidx, vstr in ans_vocab.items():
+    for vidx, vstr in ans_vocab.stoi.items():
         vfile.write(f"{vidx} \t {vstr} \n") # build vocab
 
     # initializing pad collate class

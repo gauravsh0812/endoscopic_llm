@@ -5,34 +5,24 @@ from transformers import CLIPImageProcessor, CLIPModel, CLIPVisionModel, CLIPVis
 
 class ClipVisionEncoder(nn.Module):
     
-    def __init__(self, finetune=False, config=None):
+    def __init__(self,):
         super(ClipVisionEncoder, self).__init__()
-        # if finetune:
-        #     configuration = CLIPVisionConfig(**config)
-        #     self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
-        #     self.model = CLIPVisionModel(configuration)
-        # else:
         self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
         self.model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")
 
-    def forward(self, image_path, device):
+    def forward(self, image_paths, device):
 
-        # _hid = list()
-        # for image_path in image_paths:
-        image = Image.open(image_path)
-        inputs = self.processor(images=image, return_tensors="pt").to(device)
+        _hid = list()
+        for image_path in image_paths:
+            image = Image.open(image_path)
+            inputs = self.processor(images=image, return_tensors="pt").to(device)
+            outputs = self.model(**inputs)
+            last_hidden_state = outputs.last_hidden_state
         
-        outputs = self.model(**inputs)
-        last_hidden_state = outputs.last_hidden_state
-        return last_hidden_state
-        # pooled_output = outputs.pooler_output  # pooled classes states
-
-        # _hid.append(last_hidden_state.squeeze(0))
-        # _pool.append(pooled_output.squeeze(0))
-
+            _hid.append(last_hidden_state.squeeze(0))
+        
         # hidden: (B, L, 768)
-        # pooled: (B, 768)
-        # return torch.stack(_hid).to(device)#, torch.stack(_pool).to(device)
+        return torch.stack(_hid).to(device)#, torch.stack(_pool).to(device)
     
 # device = torch.device("cuda:0")
 # cve = ClipVisionEncoder().to(device)
