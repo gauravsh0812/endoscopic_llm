@@ -2,6 +2,12 @@
 
 import torch, os
 
+def get_key_by_value(dictionary, target_value):
+    for key, value in dictionary.items():
+        if value == target_value:
+            return key
+    return None  # Return None if the value is not found
+
 def evaluate(
     model,
     test_dataloader,
@@ -13,6 +19,7 @@ def evaluate(
 ):
     model.eval()
     epoch_loss = 0
+    allans, allpreds = [],[]
 
     if is_test:
         labels_file = open("logs/predictions.txt","w")
@@ -55,17 +62,24 @@ def evaluate(
 
             epoch_loss += loss.item()
             
-            if is_test:
-                for b in range(ans.shape[0]):
+            for b in range(ans.shape[0]):
+                a = get_key_by_value(ans_vocab, ans[b])
+                p = get_key_by_value(ans_vocab, pred[b])
+                
+                allans.append(a)
+                allpreds.append(p)
+
+                if is_test:        
                     im = imgs[b]
                     q = qtn_tokenizer.decode(qtn_ids[b,:])
-                    a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
-                    p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
+                    # a = "".join([ans_vocab.itos[i] for i in ans[b,:]])
+                    # p = "".join([ans_vocab.itos[i] for i in pred[b,:]])
                     
                     labels_file.write(
                         f"{im} \t {q} \t {a} \t {p} \n"
                     )
             
+        print("acuracy: ", len([p for a,p in zip(allans,allpreds) if a==p])/len(allpreds))
 
         net_loss = epoch_loss / len(test_dataloader)
         return net_loss   
