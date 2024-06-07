@@ -66,8 +66,8 @@ class Projector(nn.Module):
             x = self.gelu(self.norm(self.final_lin1(x.permute(0,2,1)))).permute(0,2,1)
             x = self.attn(x)
             x = self.pool(x.permute(0,2,1)).permute(0,2,1)  # (B, max_len=1, 64)
-            x = torch.flatten(x, -2,-1)   # (B,max_len*64)
-            x = self.gelu(self.final_lin2(x))  # (B, 64)
+            x = torch.flatten(x, -2,-1)   # (B,max_len*64) >> (B, 64)
+            # x = self.gelu(self.final_lin2(x))  # (B, 64)
             x = self.gelu(self.final_lin3(x))  # (B, num_classes)
         
         elif self.fusion == "bilinear":
