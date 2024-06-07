@@ -56,7 +56,9 @@ class My_pad_collate(object):
     def __call__(self, batch):
         _img, _qtns, _ans = zip(*batch)
 
+        print(_img)
         print(_qtns)
+        print(_ans)
 
         padded_tokenized_qtns = self.tokenizer(
                                 _qtns, 
