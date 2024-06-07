@@ -35,7 +35,7 @@ training:
     isScheduler: True
     verbose: True
     scheduler_step_size: 5
-    scheduler_gamma: 0.9
+    scheduler_gamma: 0.5
   
   adaptor:
     __: choose fusion from ["concat","bilinear","cross_attn"]
