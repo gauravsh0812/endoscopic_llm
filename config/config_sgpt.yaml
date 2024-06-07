@@ -19,9 +19,6 @@ dataset:
   sample_size: 100
   num_workers: 0
   pin_memory: False
-  labels: ['grasper', 'bipolar', 'hook', 'scissors', 'clipper', 'irrigator', 'specimen bag',
-          'Preparation', 'calot triangle dissection', 'clipping cutting', 'gallbladder dissection', 
-          'gallbladder packaging', 'cleaning coagulation', 'gallbladder retraction']
 
 training:
   general:

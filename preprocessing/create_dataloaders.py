@@ -56,6 +56,8 @@ class My_pad_collate(object):
     def __call__(self, batch):
         _img, _qtns, _ans = zip(*batch)
 
+        print(_qtns)
+
         padded_tokenized_qtns = self.tokenizer(
                                 _qtns, 
                                 return_tensors="pt",
@@ -99,9 +101,6 @@ def data_loaders(batch_size):
 
     assert len(questions) == len(answers)
 
-    target_labels = cfg.dataset.labels
-    print("taget labels: ", target_labels)
-
     # split the image_num into train, test, validate
     train_val_images, test_images = train_test_split(
         questions_num, test_size=0.1, random_state=42
@@ -109,6 +108,8 @@ def data_loaders(batch_size):
     train_images, val_images = train_test_split(
         train_val_images, test_size=0.1, random_state=42
     )
+    
+    target_labels = []
 
     for t_idx, t_df in enumerate([train_images, test_images, val_images]):
         IMGS = list()
@@ -118,9 +119,15 @@ def data_loaders(batch_size):
             n, txt = questions[i].split("\t")
             n = n.strip().replace("QTN","")
             IMGS.append(f"{cfg.dataset.path_to_data}/{n}.png")
-            ALL_QTNS.append(txt.replace("\n",""))
-            ALL_ANS.append(answers[i].replace("\n",""))
-        
+            ALL_QTNS.append(txt.replace("\n","").strip())
+
+            _lbl = answers[i].replace("\n","").strip()
+            ALL_ANS.append(_lbl)
+            
+            # building vocab of ans
+            if _lbl not in target_labels:
+                target_labels.append(_lbl)
+
         # reshuffling the lists to avoid repeating images in a batch
         qi_data = {
             "IMG": IMGS,
@@ -179,8 +186,9 @@ def data_loaders(batch_size):
         for word, idx in qtn_vocab.items():
             f.write(f"{word} {idx}\n")
 
+    # building answers vocab
     ans_vocab = {}
-    for i,l in enumerate(cfg.dataset.labels):
+    for i,l in enumerate(target_labels):
         ans_vocab[l] = i
 
     # writing answers vocab file...
