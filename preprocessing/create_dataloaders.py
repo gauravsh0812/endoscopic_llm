@@ -56,10 +56,6 @@ class My_pad_collate(object):
     def __call__(self, batch):
         _img, _qtns, _ans = zip(*batch)
 
-        print(_img)
-        print(_qtns)
-        print(_ans)
-
         padded_tokenized_qtns = self.tokenizer(
                                 _qtns, 
                                 return_tensors="pt",
@@ -120,7 +116,7 @@ def data_loaders(batch_size):
         for i in t_df:
             n, txt = questions[i].split("\t")
             n = n.strip().replace("QTN","")
-            IMGS.append(f"{cfg.dataset.path_to_data}/{n}.png")
+            IMGS.append(f"{cfg.dataset.path_to_data}/images/{n}.png")
             ALL_QTNS.append(txt.replace("\n","").strip())
 
             _lbl = answers[i].replace("\n","").strip()
