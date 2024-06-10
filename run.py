@@ -51,6 +51,9 @@ def define_model(max_len, ans_vocab):
     if cfg.model_name == "clip_roberta_adaptor_clf":
         model = Endoscopic_model(max_len, ans_vocab)
     
+
+    return model
+
     # CLIPENC = ClipVisionEncoder()
     # ROBENC = RobertaEncoder()    
 
