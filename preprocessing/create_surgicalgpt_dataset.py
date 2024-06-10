@@ -35,8 +35,11 @@ def main():
     os.makedirs(os.path.join(folder, "dfs"), exist_ok=True)
 
     dst = "/data/gauravs/surgicalGPT/our_dataset"   
-    qtns = open("/data/gauravs/surgicalGPT/our_dataset/questions.lst","w")
-    ans = open("/data/gauravs/surgicalGPT/our_dataset/answers.lst","w")      
+    vqa_qtns = open("/data/gauravs/surgicalGPT/our_dataset/vqa/questions.lst","w")
+    vqa_ans = open("/data/gauravs/surgicalGPT/our_dataset/vqa/answers.lst","w")  
+    gvqa_qtns = open("/data/gauravs/surgicalGPT/our_dataset/gvqa/questions.lst","w")
+    gvqa_ans = open("/data/gauravs/surgicalGPT/our_dataset/gvqa/answers.lst","w")    
+
     count = 0
 
     # iterating over files
@@ -95,30 +98,38 @@ def main():
             imgdst = os.path.join(dst, f"images/{count}.png")
             shutil.copyfile(imgsrc, imgdst)
             count +=1
-
+            
             # writing questions answers
-            _qtn = [
+            _vqaqtn = [
                     f"QTN{count} \t how many tools are operating?",
                     f"QTN{count} \t what is the phase of image?",
                     ]
             
-            _ans = [
+            _vqaans = [
                     f"ANS{count} \t {str(len(row_tool))}", 
                     f"ANS{count} \t {row_phase}"
                     ]
+            
+            _gvqaqtn = [
+                f"QTN{count} \t what tools are being used in this image of a surgery?",
+                f"QTN{count} \t what can you tell us about the phase of surgery?",
+                ]
+
+            
 
             for t in row_tool:
-                _qtn.append(f"QTN{count} \t is {t} used in {row_phase}?")
-                _ans.append(f"ANS{count} \t yes")
+                _vqaqtn.append(f"QTN{count} \t is {t} used in {row_phase}?")
+                _vqaans.append(f"ANS{count} \t yes")
             
             for t in all_tool_list:
                 if t not in row_tool:
-                    _qtn.append(f"QTN{count} \t is {t} used in {row_phase}?")
-                    _ans.append(f"ANS{count} \t no")
+                    _vqaqtn.append(f"QTN{count} \t is {t} used in {row_phase}?")
+                    _vqaans.append(f"ANS{count} \t no")
 
-            for q,a in zip(_qtn, _ans):
-                qtns.write(q + "\n")
-                ans.write(a + "\n")
+            for q,a in zip(_vqaqtn, _vqaans):
+                vqa_qtns.write(q + "\n")
+                vqa_ans.write(a + "\n")
+
 
 if __name__ == "__main__":
     main()

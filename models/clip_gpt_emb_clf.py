@@ -1,5 +1,57 @@
 import torch 
 import torch.nn as nn
+from PIL import Image
+import yaml
+from box import Box
+
+from transformers import (
+    CLIPImageProcessor, 
+    CLIPVisionModel, 
+    RobertaModel,
+)
+
+import torchvision.models as models
+
+with open("config/config_sgpt.yaml") as f:
+    cfg = Box(yaml.safe_load(f))
+
+class ImageEncoder(nn.Module):
+    
+    def __init__(self,):
+        super(ImageEncoder, self).__init__()
+        
+        # Load pre-trained ResNet-18 model
+        resnet18 = models.resnet18(pretrained=True)
+        self.feature_extractor = nn.Sequential(*list(resnet18.children())[:-2])
+
+        self.model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")
+
+    def forward(self, image_paths, device):
+
+        _hid = list()
+        for image_path in image_paths:
+            image = Image.open(image_path)
+            inputs = self.processor(images=image, return_tensors="pt").to(device)
+            outputs = self.model(**inputs)
+            last_hidden_state = outputs.last_hidden_state
+        
+            _hid.append(last_hidden_state.squeeze(0))
+        
+        # hidden: (B, L, 768)
+        return torch.stack(_hid).to(device)#, torch.stack(_pool).to(device)
+
+class RobertaEncoder(nn.Module):
+
+    def __init__(self):
+        super(RobertaEncoder, self).__init__()
+        self.model = RobertaModel.from_pretrained("FacebookAI/roberta-base")        
+
+    def forward(self, ids, attns):
+        # shape of ids and attns: (B, max_len)
+        outputs = self.model(input_ids=ids,
+                             attention_mask=attns)
+        last_hidden_states = outputs.last_hidden_state # (B, max_len, 768)
+        return last_hidden_states
 
 class ClipAdaptor(nn.Module):
     def __init__(self, clip_in_dim, features, max_len):
@@ -103,4 +155,48 @@ class Self_Attention(nn.Module):
         # Compute the weighted sum of values
         attention_output = torch.bmm(attention_weights, V)  # (batch_size, seq_length, embed_dim)
         
-        return attention_output
+        return attention_output       
+
+class Endoscopic_model(nn.Module):
+
+    def __init__(self, max_len, ans_vocab):
+
+        super(Endoscopic_model, self).__init__()
+        self.clipenc = ClipVisionEncoder()
+        self.robenc = RobertaEncoder()
+        self.clipadaptor = ClipAdaptor(
+                                768, 
+                                cfg.training.adaptor.features,
+                                max_len,
+                            )
+        self.robertaadaptor = RobertaAdaptor(
+                                cfg.training.roberta.in_dim,
+                                cfg.training.adaptor.features,
+                            )
+        self.projector = Projector(
+                                cfg.training.adaptor.fusion,
+                                cfg.training.adaptor.features,
+                                max_len, 
+                                len(ans_vocab),
+                            )
+        for param in self.clipenc.parameters():
+            param.requires_grad = False
+
+        for param in self.robenc.parameters():
+            param.requires_grad = False
+
+    def forward(
+            self, 
+            imgs,
+            qtn_ids,
+            qtn_attns,
+            device,
+        ):
+
+        encoded_imgs = self.clipenc(imgs, device)  # (B, L=w*h, dim)
+        last_hidden_roberta = self.robenc(qtn_ids, qtn_attns) # (B, max_len, 768)        
+        clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
+        roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
+        projoutput = self.projector(clipoutput, roboutput) # (B,num_classes)
+        
+        return projoutput

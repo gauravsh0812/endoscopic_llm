@@ -12,7 +12,7 @@ general:
   load_trained_model_for_testing: False 
 
 dataset:
-  path_to_data: "/data/gauravs/surgicalGPT/our_dataset"
+  path_to_data: "/data/gauravs/surgicalGPT/our_dataset/"
   create_image_tensors: False
   shuffle: True
   vocab_freq: 5
