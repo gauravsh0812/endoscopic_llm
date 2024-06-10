@@ -16,8 +16,8 @@ from preprocessing.create_dataloaders import data_loaders
 from models.clip import ClipVisionEncoder
 from models.roberta import RobertaEncoder
 from models.model import Endoscopic_model
-# from models.clip_rob_clf import Endoscopic_model
-from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
+from models.clip_rob_clf import Endoscopic_model
+# from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
 from src.training import train
 from src.testing import evaluate
 from utils import *
@@ -49,10 +49,10 @@ def epoch_time(start_time, end_time):
 
 def define_model(max_len, ans_vocab):
     
-    # if cfg.model_name == "clip_roberta_adaptor_clf":
-    #     model = Endoscopic_model(max_len, ans_vocab)
+    if cfg.model_name == "clip_roberta_adaptor_clf":
+        model = Endoscopic_model(max_len, ans_vocab)
     
-    # return model
+    return model
 
     CLIPENC = ClipVisionEncoder()
     ROBENC = RobertaEncoder()    
