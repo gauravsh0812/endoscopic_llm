@@ -174,8 +174,6 @@ class Endoscopic_model(nn.Module):
                                 len(ans_vocab),
                             )
 
-        print(self.clipenc)
-
     def forward(
             self, 
             imgs,
