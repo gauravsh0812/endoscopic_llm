@@ -80,6 +80,7 @@ class My_pad_collate(object):
         )
 
 def img_tnsr(im):
+    print(im)
     num = int(im.split(".")[0])
     if not os.path.exists(f"{cfg.dataset.path_to_data}/image_tensors/{num}.pt"):
         IMAGE = Image.open(f"{cfg.dataset.path_to_data}/images/{im}")
