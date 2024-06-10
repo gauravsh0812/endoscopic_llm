@@ -173,6 +173,11 @@ class Endoscopic_model(nn.Module):
                                 max_len, 
                                 len(ans_vocab),
                             )
+        for param in self.clipenc.parameters():
+            param.requires_grad = False
+
+        for param in self.robenc.parameters():
+            param.requires_grad = False
 
     def forward(
             self, 

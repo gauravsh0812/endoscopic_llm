@@ -91,7 +91,7 @@ def evaluate(
         print("recall: ", recall)
         print("F1 score: ", f1)
 
-        print("acuracy manual: ", len([p for a,p in zip(allans,allpreds) if a==p])/len(allpreds))
+        # print("acuracy manual: ", len([p for a,p in zip(allans,allpreds) if a==p])/len(allpreds))
 
         net_loss = epoch_loss / len(test_dataloader)
         return net_loss   
