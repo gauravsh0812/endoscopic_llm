@@ -47,9 +47,6 @@ class RobertaEncoder(nn.Module):
         last_hidden_states = outputs.last_hidden_state # (B, max_len, 768)
         return last_hidden_states
 
-import torch 
-import torch.nn as nn
-
 class ClipAdaptor(nn.Module):
     def __init__(self, clip_in_dim, features, max_len):
         super(ClipAdaptor, self).__init__()
@@ -159,17 +156,17 @@ class Endoscopic_model(nn.Module):
     def __init__(self, max_len, ans_vocab):
 
         super(Endoscopic_model, self).__init__()
-        self.clipenc = ClipVisionEncoder(), 
-        self.robenc = RobertaEncoder(),
+        self.clipenc = ClipVisionEncoder()
+        self.robenc = RobertaEncoder()
         self.clipadaptor = ClipAdaptor(
                                 768, 
                                 cfg.training.adaptor.features,
                                 max_len,
-                            ),
+                            )
         self.robertaadaptor = RobertaAdaptor(
                                 cfg.training.roberta.in_dim,
                                 cfg.training.adaptor.features,
-                            ),
+                            )
         self.projector = Projector(
                                 cfg.training.adaptor.fusion,
                                 cfg.training.adaptor.features,
