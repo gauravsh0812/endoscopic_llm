@@ -359,6 +359,4 @@ if __name__ == "__main__":
 
     else:
         train_model()
-        # calculate accuracy (from utils.py)
-        accuracy()
         

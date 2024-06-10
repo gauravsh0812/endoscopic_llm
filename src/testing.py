@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import torch, os
+import torch
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
 
 def get_key_by_value(dictionary, target_value):
     for key, value in dictionary.items():
@@ -79,7 +81,17 @@ def evaluate(
                         f"{im} \t {q} \t {a} \t {p} \n"
                     )
             
-        print("acuracy: ", len([p for a,p in zip(allans,allpreds) if a==p])/len(allpreds))
+        accuracy = accuracy_score(allans, allpreds)
+        precision = precision_score(allans, allpreds, average='micro')
+        recall = recall_score(allans, allpreds, average='micro')
+        f1 = f1_score(allans, allpreds, average='micro')
+        
+        print("accuracy: ", accuracy)
+        print("precision: ", precision)
+        print("recall: ", recall)
+        print("F1 score: ", f1)
+
+        print("acuracy manual: ", len([p for a,p in zip(allans,allpreds) if a==p])/len(allpreds))
 
         net_loss = epoch_loss / len(test_dataloader)
         return net_loss   
