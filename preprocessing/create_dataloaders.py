@@ -136,7 +136,7 @@ def data_loaders(batch_size):
         # creating image_tensors;
         if cfg.dataset.create_image_tensors:
             os.makedirs(f"{cfg.dataset.path_to_data}/image_tensors", exist_ok=True)
-            with multiprocessing.Pool(cfg.dataset.cpu_count) as pool:
+            with multiprocessing.Pool(100) as pool:
                 pool.map(img_tnsr, IMGS) 
 
         if t_idx == 0:
