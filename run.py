@@ -23,7 +23,7 @@ from src.training import train
 from src.testing import evaluate
 from utils import *
 
-with open("config/config_sgpt.yaml") as f:
+with open("config/config_surgpt.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 def set_random_seed(SEED):
@@ -54,9 +54,9 @@ def define_model(max_len, ans_vocab):
         from models.clip_rob_clf import Endoscopic_model
         model = Endoscopic_model(max_len, ans_vocab)
     
-    elif cfg.model_name == "clip_gpt_emb_clf":
-        from models.clip_gpt_emb_clf import Endoscopic_model
-        model = Endoscopic_model(max_len, ans_vocab)
+    elif cfg.model_name == "surgical_gpt":
+        from models.surgpt import Endoscopic_model
+        model = Endoscopic_model(device, max_len, ans_vocab)
     
     return model
 
