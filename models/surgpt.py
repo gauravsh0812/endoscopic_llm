@@ -84,6 +84,7 @@ class Endoscopic_model(nn.Module):
             
         output = self.pool(output.permute(0,2,1)).permute(0,2,1)
         output = torch.flatten(output, -2, -1)
+        print(output.shape)
         output = self.layer(output) # (B, num_classes)
 
         return output 
