@@ -17,6 +17,7 @@ Preprocess the image and texts to save them as tensors and questions answers, re
 python preprocessing/preprocess_dataset.py
 ```
 ## Training
+Check and modify the model name as per needed.
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python run.py
 ```
