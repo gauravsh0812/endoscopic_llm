@@ -56,7 +56,7 @@ def define_model(device, max_len, ans_vocab):
     
     elif cfg.model_name == "surgical_gpt":
         from models.surgpt import Endoscopic_model
-        model = Endoscopic_model(device, max_len, ans_vocab)
+        model = Endoscopic_model(device, max_len, len(ans_vocab))
     
     return model
 
