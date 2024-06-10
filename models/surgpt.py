@@ -38,7 +38,7 @@ class Endoscopic_model(nn.Module):
             nn.Linear(512, num_classes),
         )
     
-    def forward(self, imgs, qtn_attns, qtn_ids):
+    def forward(self, imgs, qtn_attns, qtn_ids, device):
 
         # image embedding
         features = self.encoded_img(imgs)

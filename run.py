@@ -133,7 +133,7 @@ def train_model(rank=None):
                 ans_vocab,
                 max_len,
             ) = data_loaders(cfg.training.general.batch_size)
-            model = define_model(max_len, ans_vocab).to(device)
+            model = define_model(device, max_len, ans_vocab).to(device)
 
         elif cfg.general.ddp:
             # create default process group
@@ -146,7 +146,7 @@ def train_model(rank=None):
                 qtn_tokenizer, ans_vocab,
                 max_len,
             ) = data_loaders(cfg.training.general.batch_size)
-            model = define_model(max_len,ans_vocab)
+            model = define_model(device, max_len,ans_vocab)
             model = DDP(
                 model.to(f"cuda:{rank}"),
                 device_ids=[rank],
@@ -166,7 +166,7 @@ def train_model(rank=None):
             qtn_tokenizer, ans_vocab,
             max_len,
         ) = data_loaders()
-        model = define_model(max_len,ans_vocab).to(device)
+        model = define_model(device, max_len,ans_vocab).to(device)
 
     print("MODEL: ")
     print(f"The model has {count_parameters(model)} trainable parameters")
