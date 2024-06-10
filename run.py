@@ -48,7 +48,7 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
-def define_model(max_len, ans_vocab):
+def define_model(device, max_len, ans_vocab):
     
     if cfg.model_name == "clip_roberta_adaptor_clf":
         from models.clip_rob_clf import Endoscopic_model
