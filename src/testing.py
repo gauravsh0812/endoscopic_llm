@@ -2,7 +2,7 @@
 
 import torch
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-
+from sklearn.metrics import confusion_matrix
 
 def get_key_by_value(dictionary, target_value):
     for key, value in dictionary.items():
@@ -80,7 +80,9 @@ def evaluate(
                     labels_file.write(
                         f"{im} \t {q} \t {a} \t {p} \n"
                     )
-            
+        
+        cm = confusion_matrix(allans, allpreds)
+        print(cm)
         accuracy = accuracy_score(allans, allpreds)
         precision = precision_score(allans, allpreds, average='micro')
         recall = recall_score(allans, allpreds, average='micro')
