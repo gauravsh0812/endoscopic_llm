@@ -12,7 +12,7 @@ class ImageEncoder(nn.Module):
     def __init__(self,):
         super(ImageEncoder, self).__init__()
         self.processor = CLIPImageProcessor.from_pretrained("openai/clip-vit-base-patch32")
-        self.model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32").visual
+        self.model = CLIPVisionModel.from_pretrained("openai/clip-vit-base-patch32")
 
     def forward(self, image_paths):
 
