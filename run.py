@@ -13,11 +13,14 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
 from preprocessing.create_dataloaders import data_loaders
-from models.clip import ClipVisionEncoder
-from models.roberta import RobertaEncoder
-from models.model import Endoscopic_model
-from models.clip_rob_clf import Endoscopic_model
+
+# from models.clip import ClipVisionEncoder
+# from models.roberta import RobertaEncoder
+# from models.model import Endoscopic_model
 # from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
+
+from models.clip_rob_clf import Endoscopic_model
+
 from src.training import train
 from src.testing import evaluate
 from utils import *
@@ -54,44 +57,44 @@ def define_model(max_len, ans_vocab):
     
     return model
 
-    CLIPENC = ClipVisionEncoder()
-    ROBENC = RobertaEncoder()    
+    # CLIPENC = ClipVisionEncoder()
+    # ROBENC = RobertaEncoder()    
 
-    if cfg.training.clip.finetune:
-        in_dim = cfg.training.clip.configuration.hidden_size
-    else:
-        in_dim = 768
-    CLIPADA = ClipAdaptor(in_dim, 
-                  cfg.training.adaptor.features,
-                  max_len,
-                  )
+    # if cfg.training.clip.finetune:
+    #     in_dim = cfg.training.clip.configuration.hidden_size
+    # else:
+    #     in_dim = 768
+    # CLIPADA = ClipAdaptor(in_dim, 
+    #               cfg.training.adaptor.features,
+    #               max_len,
+    #               )
     
-    ROBADA = RobertaAdaptor(
-        cfg.training.roberta.in_dim,
-        cfg.training.adaptor.features,
-    )
+    # ROBADA = RobertaAdaptor(
+    #     cfg.training.roberta.in_dim,
+    #     cfg.training.adaptor.features,
+    # )
     
-    PROJ = Projector(
-        cfg.training.adaptor.fusion,
-        cfg.training.adaptor.features,
-        max_len, 
-        len(ans_vocab),
-    )
+    # PROJ = Projector(
+    #     cfg.training.adaptor.fusion,
+    #     cfg.training.adaptor.features,
+    #     max_len, 
+    #     len(ans_vocab),
+    # )
 
-    # freezing the pre-trained models
-    # only training the adaptor layer
-    for param in CLIPENC.parameters():
-        param.requires_grad = cfg.training.clip.finetune
+    # # freezing the pre-trained models
+    # # only training the adaptor layer
+    # for param in CLIPENC.parameters():
+    #     param.requires_grad = cfg.training.clip.finetune
 
-    for param in ROBENC.parameters():
-        param.requires_grad = cfg.training.roberta.finetune 
+    # for param in ROBENC.parameters():
+    #     param.requires_grad = cfg.training.roberta.finetune 
 
-    model = Endoscopic_model(CLIPENC, 
-                            ROBENC,
-                            CLIPADA,
-                            ROBADA,
-                            PROJ,)
-    return model
+    # model = Endoscopic_model(CLIPENC, 
+    #                         ROBENC,
+    #                         CLIPADA,
+    #                         ROBADA,
+    #                         PROJ,)
+    # return model
 
 def train_model(rank=None):
 
