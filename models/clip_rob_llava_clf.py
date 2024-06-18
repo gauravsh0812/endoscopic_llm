@@ -144,6 +144,7 @@ class Endoscopic_model(nn.Module):
         
         self.projector = Projector(
                                 cfg.training.adaptor.features,
+                                max_len,
                                 len(ans_vocab),
                             )
 
