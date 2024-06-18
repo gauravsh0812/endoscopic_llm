@@ -178,6 +178,5 @@ class Endoscopic_model(nn.Module):
         llava_output = self.llava(input_embeds).logits   # (B, L, 32000)
         
         projoutput = self.projector(llava_output) # (B,num_classes)
-        print(projoutput.shape)
 
         return projoutput
