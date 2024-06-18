@@ -180,5 +180,4 @@ class Endoscopic_model(nn.Module):
         projoutput = self.projector(llava_output) # (B,num_classes)
         print(projoutput.shape)
 
-        exit()
         return projoutput
