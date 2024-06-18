@@ -81,8 +81,7 @@ def evaluate(
                         f"{im} \t {q} \t {a} \t {p} \n"
                     )
         
-        cm = confusion_matrix(allans, allpreds)
-        print(cm)
+        # cm = confusion_matrix(allans, allpreds)
         accuracy = accuracy_score(allans, allpreds)
         precision = precision_score(allans, allpreds, average='micro')
         recall = recall_score(allans, allpreds, average='micro')
