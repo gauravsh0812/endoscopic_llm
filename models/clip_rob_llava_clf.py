@@ -67,26 +67,28 @@ class Projector(nn.Module):
     def __init__(self, features, max_len, num_classes):
         super(Projector, self).__init__()
 
+        L = 56
+
         self.final_lin1 = nn.Sequential(
             nn.Linear(32000, features[0]),
-            nn.BatchNorm1d(56),
+            nn.BatchNorm1d(L),
             nn.GELU(),
 
             nn.Linear(features[0], features[1]),
-            nn.BatchNorm1d(56),
+            nn.BatchNorm1d(L),
             nn.GELU(),
 
             nn.Linear(features[1], features[2]),
-            nn.BatchNorm1d(56),
+            nn.BatchNorm1d(L),
             nn.GELU(),
 
             nn.Linear(features[2], features[-1]),
-            nn.BatchNorm1d(56),
+            nn.BatchNorm1d(L),
             nn.GELU(),    
         )
 
         self.final_lin2 = nn.Sequential(
-            nn.Linear(56, max_len),
+            nn.Linear(L, max_len),
             nn.BatchNorm1d(features[0]),
             nn.GELU(),
         )
