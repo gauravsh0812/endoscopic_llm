@@ -37,7 +37,7 @@ def evaluate(
             _imgs = []
             for i in imgs:
                 name = os.path.basename(i).split(".")[0]
-                tnsr = torch.load(f"/data/gauravs/surgicalGPT/our_dataset/image_tensors/{name}.pt")#.squeeze(0)
+                tnsr = torch.load(f"/data/gauravs/surgicalGPT/cholec80/image_tensors/{name}.pt")#.squeeze(0)
                 _imgs.append(tnsr)
             
             _imgs = torch.stack(_imgs).to(device)
