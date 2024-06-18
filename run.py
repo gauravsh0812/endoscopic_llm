@@ -13,12 +13,6 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
 from preprocessing.create_dataloaders import data_loaders
-
-# from models.clip import ClipVisionEncoder
-# from models.roberta import RobertaEncoder
-# from models.model import Endoscopic_model
-# from models.adaptor import ClipAdaptor, Projector, RobertaAdaptor
-
 from src.training import train
 from src.testing import evaluate
 from utils import *
@@ -49,15 +43,8 @@ def epoch_time(start_time, end_time):
     return elapsed_mins, elapsed_secs
 
 def define_model(device, max_len, ans_vocab):
-    
-    if cfg.model_name == "clip_roberta_adaptor_clf":
-        from models.clip_rob_clf import Endoscopic_model
-        model = Endoscopic_model(max_len, ans_vocab)
-    
-    elif cfg.model_name == "surgical_gpt":
-        from models.surgpt import Endoscopic_model
-        model = Endoscopic_model(device, max_len, len(ans_vocab))
-    
+    from models.clip_rob_llava_clf import Endoscopic_model
+    model = Endoscopic_model(max_len, ans_vocab)
     return model
 
     # CLIPENC = ClipVisionEncoder()
