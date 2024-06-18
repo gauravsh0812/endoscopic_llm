@@ -11,7 +11,7 @@ from transformers import (
     LlavaForConditionalGeneration,
 )
 
-with open("config/config_sgpt.yaml") as f:
+with open("config/config_surgpt.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 class ClipVisionEncoder(nn.Module):
@@ -213,7 +213,7 @@ class Endoscopic_model(nn.Module):
         print("llava_output: ", llava_output.shape)
         
         exit()
-        
+
         clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
         roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
         projoutput = self.projector(clipoutput, roboutput) # (B,num_classes)
