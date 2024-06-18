@@ -6,8 +6,8 @@ model = LlavaNextForConditionalGeneration.from_pretrained("llava-hf/llava-v1.6-m
 processor = AutoProcessor.from_pretrained("llava-hf/llava-v1.6-mistral-7b-hf")
 
 prompt = "[INST] <image>\nWhat is shown in this image? [/INST]"
-url = "https://www.ilankelman.org/stopsigns/australia.jpg"
-image = Image.open(requests.get(url, stream=True).raw)
+_path = "/data/gauravs/combine_data/images/10.png"
+image = Image.open(_path)
 
 inputs = processor(text=prompt, images=image, return_tensors="pt")
 print(inputs)
