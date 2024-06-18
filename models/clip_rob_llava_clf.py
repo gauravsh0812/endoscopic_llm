@@ -62,81 +62,48 @@ class Llava(nn.Module):
         outputs = self.model(inputs_embeds=inputs_embeds,) # since we don't use any attn mask, no need to provide that.
         return outputs
 
-class ClipAdaptor(nn.Module):
-    def __init__(self, clip_in_dim, features, max_len):
-        super(ClipAdaptor, self).__init__()
-
-        self.cliplin1 = nn.Linear(clip_in_dim, features[0])
-        self.cliplin2 = nn.Linear(features[0], features[1])
-        self.cliplin3 = nn.Linear(features[1], features[2])
-        self.cliplin4 = nn.Linear(features[2], features[3])
-        self.proj_clip = nn.Linear(50,max_len)
-        self.relu = nn.ReLU()
-    
-    def forward(self, xc):
-        
-        xc = self.relu(self.cliplin1(xc))
-        xc = self.relu(self.cliplin2(xc))
-        xc = self.relu(self.cliplin3(xc))
-        xc = self.relu(self.cliplin4(xc))
-        xc = self.relu(self.proj_clip(xc.permute(0,2,1))).permute(0,2,1)
-        
-        return xc # (B,max_len, 64)
-
-class RobertaAdaptor(nn.Module):
-    def __init__(self, roberta_in_dim, features):
-        super(RobertaAdaptor, self).__init__()
-
-        self.roblin1 = nn.Linear(roberta_in_dim, features[0])
-        self.roblin2 = nn.Linear(features[0], features[1])
-        self.roblin3 = nn.Linear(features[1], features[2])
-        self.roblin4 = nn.Linear(features[2], features[3])
-        self.gelu = nn.GELU()
-    
-    def forward(self, xr):
-        xr = self.gelu(self.roblin1(xr))
-        xr = self.gelu(self.roblin2(xr))
-        xr = self.gelu(self.roblin3(xr))
-        xr = self.gelu(self.roblin4(xr))
-        
-        return xr # (B,max_len, 64)
-
 class Projector(nn.Module):
 
-    def __init__(self, fusion, features, max_len, num_classes):
+    def __init__(self, features, max_len, num_classes):
         super(Projector, self).__init__()
-        self.fusion = fusion
-        if self.fusion == "concat":
-            self.final_lin1 = nn.Linear(max_len*2, max_len)
-            self.attn = Self_Attention(features[-1])
-            # self.final_lin2 = nn.Linear(max_len*features[-1], features[-1])
-            self.final_lin3 = nn.Linear(features[-1], num_classes)
-            self.norm = nn.BatchNorm1d(features[-1])
-            self.pool = nn.AdaptiveAvgPool1d(1)
 
-        elif self.fusion == "bilinear":
-            self.attn = Self_Attention(max_len)
-            self.final_lin1 = nn.Linear(max_len*max_len, num_classes)
+        self.final_lin1 = nn.Sequential(
+            nn.Linear(32000, features[0]),
+            nn.BatchNorm1d(features[0]),
+            nn.GELU(),
+
+            nn.Linear(features[0], features[1]),
+            nn.BatchNorm1d(features[1]),
+            nn.GELU(),
+
+            nn.Linear(features[1], features[2]),
+            nn.BatchNorm1d(features[2]),
+            nn.GELU(),
+
+            nn.Linear(features[2], features[-1]),
+            nn.BatchNorm1d(features[-1]),
+            nn.GELU(),    
+        )
+
+        self.final_lin2 = nn.Sequential(
+            nn.Linear(56, max_len),
+            nn.BatchNorm1d(features[0]),
+            nn.GELU(),
+        )
+        
+        self.attn = Self_Attention(features[-1])
+        self.final_lin = nn.Linear(features[-1], num_classes)
+        self.pool = nn.AdaptiveAvgPool1d(1)
 
         self.gelu = nn.GELU()
 
-    def forward(self, xc, xr):
-        # x_roberta + x
-        if self.fusion == "concat":
-            x = torch.cat((xc,xr), dim=1)  
-            x = self.gelu(self.norm(self.final_lin1(x.permute(0,2,1)))).permute(0,2,1)
-            x = self.attn(x)
-            x = self.pool(x.permute(0,2,1)).permute(0,2,1)  # (B, max_len=1, 64)
-            x = torch.flatten(x, -2,-1)   # (B,max_len*64) >> (B, 64)
-            # x = self.gelu(self.final_lin2(x))  # (B, 64)
-            x = self.gelu(self.final_lin3(x))  # (B, num_classes)
-        
-        elif self.fusion == "bilinear":
-            
-            x = torch.bmm(xc, xr.permute(0,2,1))  # (B, max, max)
-            x = self.attn(x)
-            x = torch.flatten(x,-2,-1) # (B, max*max)
-            x = self.gelu(self.final_lin1(x))  # (B, num_classes)
+    def forward(self,x):
+        x = self.final_lin1(x)  # (B, 56, 64)
+        x = self.final_lin2(x.permute(0,2,1)).permute(0,2,1)  # (B, max, 64)
+        x = self.attn(x)
+        x = self.pool(x.permute(0,2,1)).permute(0,2,1)  # (B, max_len=1, 64)
+        x = torch.flatten(x, -2,-1)   # (B,max_len*64) >> (B, 64)
+        x = self.gelu(self.final_lin(x))  # (B, num_classes)
 
         return x   # (B,num_classes)
 
@@ -174,19 +141,9 @@ class Endoscopic_model(nn.Module):
         self.clipenc = ClipVisionEncoder()
         self.robenc = RobertaEncoder()
         self.llava = Llava()
-        self.clipadaptor = ClipAdaptor(
-                                768, 
-                                cfg.training.adaptor.features,
-                                max_len,
-                            )
-        self.robertaadaptor = RobertaAdaptor(
-                                cfg.training.roberta.in_dim,
-                                cfg.training.adaptor.features,
-                            )
+        
         self.projector = Projector(
-                                cfg.training.adaptor.fusion,
                                 cfg.training.adaptor.features,
-                                max_len, 
                                 len(ans_vocab),
                             )
 
@@ -214,15 +171,11 @@ class Endoscopic_model(nn.Module):
         # combining the input embeddings: (B, seq, Hid)
         # keeping text first and then image emb
         input_embeds = torch.concat((last_hidden_roberta, encoded_imgs), dim=1)  # (B, L+max, 768)
-        print(input_embeds.shape)
-
-        llava_output = self.llava(input_embeds).logits
-        print("llava_output: ", llava_output.shape)
         
+        llava_output = self.llava(input_embeds).logits   # (B, L, 32000)
+        
+        projoutput = self.projector(llava_output) # (B,num_classes)
+        print(projoutput.shape)
+
         exit()
-
-        clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
-        roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
-        projoutput = self.projector(clipoutput, roboutput) # (B,num_classes)
-        
         return projoutput
