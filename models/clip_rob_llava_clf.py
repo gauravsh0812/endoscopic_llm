@@ -8,6 +8,7 @@ from transformers import (
     CLIPImageProcessor, 
     CLIPVisionModel, 
     RobertaModel,
+    LlavaForConditionalGeneration,
 )
 
 with open("config/config_sgpt.yaml") as f:
@@ -46,6 +47,15 @@ class RobertaEncoder(nn.Module):
                              attention_mask=attns)
         last_hidden_states = outputs.last_hidden_state # (B, max_len, 768)
         return last_hidden_states
+
+class Llava(nn.Module):
+    def __init__(self,):
+        super(Llava, self).__init__()
+        self.model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf")
+    
+    def forward(self, inputs_embeds):
+        outputs = self.model(inputs_embeds=inputs_embeds,) # since we don't use any attn mask, no need to provide that.
+        return outputs
 
 class ClipAdaptor(nn.Module):
     def __init__(self, clip_in_dim, features, max_len):
@@ -158,6 +168,7 @@ class Endoscopic_model(nn.Module):
         super(Endoscopic_model, self).__init__()
         self.clipenc = ClipVisionEncoder()
         self.robenc = RobertaEncoder()
+        self.llava = Llava()
         self.clipadaptor = ClipAdaptor(
                                 768, 
                                 cfg.training.adaptor.features,
@@ -173,11 +184,16 @@ class Endoscopic_model(nn.Module):
                                 max_len, 
                                 len(ans_vocab),
                             )
+
         for param in self.clipenc.parameters():
             param.requires_grad = False
 
         for param in self.robenc.parameters():
             param.requires_grad = False
+
+        for param in self.llava.parameters():
+            param.requires_grad = False
+
 
     def forward(
             self, 
@@ -187,8 +203,17 @@ class Endoscopic_model(nn.Module):
             device,
         ):
 
-        encoded_imgs = self.clipenc(imgs, device)  # (B, L=w*h, dim)
-        last_hidden_roberta = self.robenc(qtn_ids, qtn_attns) # (B, max_len, 768)        
+        encoded_imgs = self.clipenc(imgs, device)  # (B, L=w*h, 768)
+        last_hidden_roberta = self.robenc(qtn_ids, qtn_attns) # (B, max_len, 768)   
+        
+        # combining the input embeddings: (B, seq, Hid)
+        # keeping text first and then image emb
+        input_embeds = torch.concat((last_hidden_roberta, encoded_imgs), dim=1)  # (B, L+max, 768)
+        llava_output = self.llava(input_embeds)
+        print("llava_output: ", llava_output.shape)
+        
+        exit()
+        
         clipoutput = self.clipadaptor(encoded_imgs)  # (B, max_len, 64)
         roboutput = self.robertaadaptor(last_hidden_roberta) # (B, max, 64)
         projoutput = self.projector(clipoutput, roboutput) # (B,num_classes)
