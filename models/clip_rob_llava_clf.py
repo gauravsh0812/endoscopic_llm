@@ -9,6 +9,7 @@ from transformers import (
     CLIPVisionModel, 
     RobertaModel,
     LlavaForConditionalGeneration,
+    LlavaConfig, CLIPVisionConfig, LlamaConfig
 )
 
 with open("config/config_surgpt.yaml") as f:
@@ -51,7 +52,11 @@ class RobertaEncoder(nn.Module):
 class Llava(nn.Module):
     def __init__(self,):
         super(Llava, self).__init__()
-        self.model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf")
+        vision_config = CLIPVisionConfig()
+        text_config = LlamaConfig(hidden_size=768)
+        configuration = LlavaConfig(vision_config, text_config)
+        # self.model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf")
+        self.model = LlavaForConditionalGeneration(configuration)
     
     def forward(self, inputs_embeds):
         outputs = self.model(inputs_embeds=inputs_embeds,) # since we don't use any attn mask, no need to provide that.
