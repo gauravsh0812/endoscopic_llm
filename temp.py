@@ -5,7 +5,7 @@ model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-v1.6-mistr
 processor = AutoProcessor.from_pretrained("llava-hf/llava-v1.6-mistral-7b-hf")
 
 prompt = "[INST] <image>\nWhat is shown in this image? [/INST]"
-_path = "10.png"
+_path = "/data/gauravs/surgicalGPT/cholec80/images/10.png"
 image = Image.open(_path)
 
 inputs = processor(text=prompt, images=image, return_tensors="pt")
