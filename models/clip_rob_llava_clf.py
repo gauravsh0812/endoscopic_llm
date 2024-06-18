@@ -217,7 +217,7 @@ class Endoscopic_model(nn.Module):
         print(input_embeds.shape)
 
         llava_output = self.llava(input_embeds)
-        print("llava_output: ", llava_output.shape)
+        print("llava_output: ", llava_output)
         
         exit()
 
