@@ -216,8 +216,8 @@ class Endoscopic_model(nn.Module):
         input_embeds = torch.concat((last_hidden_roberta, encoded_imgs), dim=1)  # (B, L+max, 768)
         print(input_embeds.shape)
 
-        llava_output = self.llava(input_embeds)
-        print("llava_output: ", llava_output)
+        llava_output = self.llava(input_embeds).logits
+        print("llava_output: ", llava_output.shape)
         
         exit()
 
