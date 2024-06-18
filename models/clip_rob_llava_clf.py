@@ -89,7 +89,7 @@ class Projector(nn.Module):
 
         self.final_lin2 = nn.Sequential(
             nn.Linear(L, max_len),
-            nn.BatchNorm1d(features[0]),
+            nn.BatchNorm1d(features[-1]),
             nn.GELU(),
         )
         
