@@ -67,7 +67,7 @@ class Projector(nn.Module):
     def __init__(self, features, max_len, num_classes):
         super(Projector, self).__init__()
 
-        L = 56
+        L = 58
 
         self.final_lin1 = nn.Sequential(
             nn.Linear(32000, features[0]),
