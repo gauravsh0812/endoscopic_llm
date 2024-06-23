@@ -81,19 +81,36 @@ def evaluate(
                         f"{im} \t {q} \t {a} \t {p} \n"
                     )
         
-        cm = confusion_matrix(allans, allpreds)
-        print(cm)
         accuracy = accuracy_score(allans, allpreds)
-        precision = precision_score(allans, allpreds, average='weighted')
-        recall = recall_score(allans, allpreds, average='weighted')
-        f1 = f1_score(allans, allpreds, average='weighted')
-        
         print("accuracy: ", accuracy)
-        print("precision: ", precision)
-        print("recall: ", recall)
-        print("F1 score: ", f1)
+        
+        if is_test:
+            cm = confusion_matrix(allans, allpreds)
+            print(cm)
 
-        # print("acuracy manual: ", len([p for a,p in zip(allans,allpreds) if a==p])/len(allpreds))
+            print(">>>>>>> weighted scores...")
+            precision = precision_score(allans, allpreds, average='weighted')
+            recall = recall_score(allans, allpreds, average='weighted')
+            f1 = f1_score(allans, allpreds, average='weighted')
+            print("precision: ", precision)
+            print("recall: ", recall)
+            print("F1 score: ", f1)
 
+            print(">>>>>>> macro scores...")
+            precision = precision_score(allans, allpreds, average='macro')
+            recall = recall_score(allans, allpreds, average='macro')
+            f1 = f1_score(allans, allpreds, average='macro')
+            print("precision: ", precision)
+            print("recall: ", recall)
+            print("F1 score: ", f1)
+
+            print(">>>>>>> micro scores...")
+            precision = precision_score(allans, allpreds, average='micro')
+            recall = recall_score(allans, allpreds, average='micro')
+            f1 = f1_score(allans, allpreds, average='micro')
+            print("precision: ", precision)
+            print("recall: ", recall)
+            print("F1 score: ", f1)
+        
         net_loss = epoch_loss / len(test_dataloader)
         return net_loss   
