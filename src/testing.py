@@ -84,9 +84,9 @@ def evaluate(
         cm = confusion_matrix(allans, allpreds)
         print(cm)
         accuracy = accuracy_score(allans, allpreds)
-        precision = precision_score(allans, allpreds, average='weighted')
-        recall = recall_score(allans, allpreds, average='weighted')
-        f1 = f1_score(allans, allpreds, average='weighted')
+        precision = precision_score(allans, allpreds, average='macro')
+        recall = recall_score(allans, allpreds, average='macro')
+        f1 = f1_score(allans, allpreds, average='macro')
         
         print("accuracy: ", accuracy)
         print("precision: ", precision)
