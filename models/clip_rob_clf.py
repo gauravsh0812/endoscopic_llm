@@ -10,7 +10,7 @@ from transformers import (
     RobertaModel,
 )
 
-with open("config/config_sgpt.yaml") as f:
+with open("config/config_cliprob.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 class ClipVisionEncoder(nn.Module):

@@ -17,7 +17,7 @@ import torch.multiprocessing as mp
 mp.set_start_method('spawn', force=True)
 
 # reading config file
-with open("config/config_surgpt.yaml") as f:
+with open("config/config_cliprob.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 def get_max_len(train, test, val):
