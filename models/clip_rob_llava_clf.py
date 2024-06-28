@@ -12,7 +12,7 @@ from transformers import (
     LlavaConfig, CLIPVisionConfig, LlamaConfig
 )
 
-with open("config/config_surgpt.yaml") as f:
+with open("config/config.yaml") as f:
     cfg = Box(yaml.safe_load(f))
 
 class ClipVisionEncoder(nn.Module):
