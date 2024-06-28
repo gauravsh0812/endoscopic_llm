@@ -1,4 +1,4 @@
-model_name: clip_roberta_adaptor_clf
+model_name: clip_roberta_llava_clf
 general:
   seed: 42
   wandb: False
