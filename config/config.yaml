@@ -16,7 +16,7 @@ dataset:
   create_image_tensors: False
   shuffle: True
   vocab_freq: 5
-  sample_size: 25000
+  sample_size: 75000
   num_workers: 0
   pin_memory: False
 
@@ -24,7 +24,7 @@ training:
   general:
     clip: 1 
     batch_size: 16
-    epochs: 1
+    epochs: 50
     dropout: 0.3
     learning_rate: 0.001
     weight_decay: 0.0005
