@@ -12,15 +12,13 @@ general:
   load_trained_model_for_testing: False 
 
 dataset:
-  path_to_data: "/data/gauravs/combine_data"
+  path_to_data: "/data/gauravs/surgicalGPT/cholec80/"
+  create_image_tensors: False
   shuffle: True
   vocab_freq: 5
   sample_size: 25000
   num_workers: 0
   pin_memory: False
-  labels: ["Abdominal_wall_cavity", "liver", "cystic_plate", "red", "brown", 
-          "silver", "instrument", "anatomy", "grasper", "gallbladder", "omentum", 
-          "white", "yellow", "gut", "hook"]
 
 training:
   general:
@@ -37,11 +35,11 @@ training:
     isScheduler: True
     verbose: True
     scheduler_step_size: 5
-    scheduler_gamma: 0.9
+    scheduler_gamma: 0.5
   
   adaptor:
     __: choose fusion from ["concat","bilinear","cross_attn"]
-    fusion: bilinear
+    fusion: concat
     features: [512,256,128,64]
 
   roberta:
