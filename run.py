@@ -242,7 +242,7 @@ def train_model(rank=None):
                     if (not cfg.general.ddp) or (cfg.general.ddp and rank == 0):                    
                         torch.save(
                             model.state_dict(),
-                            f"trained_models/{cfg.model_name}.pt",
+                            f"trained_models/{cfg.model_name}_best.pt",
                         )
 
                         if (cfg.general.wandb):
