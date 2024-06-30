@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     files = os.listdir("/data/shared/CholecT50/CholecT50/labels")
     for _file in range(len(files)):
-        _file_name = f"{_file:2f}"
+        _file_name = f"VID{_file:2f}.json"
         print(_file_name)
         data = json.load(open(f"/data/shared/CholecT50/CholecT50/labels/{_file_name}"))
 
