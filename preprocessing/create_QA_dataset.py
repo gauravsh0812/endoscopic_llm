@@ -1,5 +1,5 @@
 import multiprocessing as mp
-import os, shutil
+import os, shutil, json
 import pandas as pd
 import tqdm
 
@@ -13,16 +13,7 @@ what is the phase of image?
 'is ' + label + ' used in ' + phases + '?' >> label + ' is not used in ' + phases  OR no
 
 We start with the simpler version with yes and no. Later we can introduce other option as well.
-"""
-
-all_tool_list = ['grasper', 'bipolar', 'hook', 'scissors', 'clipper', 'irrigator', 'specimen bag'] 
-space_conv_dict = {'Preparation':'Preparation' , 
-                   'CalotTriangleDissection':'calot triangle dissection', 
-                   'ClippingCutting':'clipping cutting', 
-                   'GallbladderDissection':'gallbladder dissection', 
-                   'GallbladderPackaging':'gallbladder packaging', 
-                   'CleaningCoagulation':'cleaning coagulation', 
-                   'GallbladderRetraction':'gallbladder retraction'}
+"""    
 
 def main():
     
@@ -132,4 +123,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    for _file in os.listdir("/data/shared/CholecT50/CholecT50/labels"):
+        data = json.load(open(f"/data/shared/CholecT50/CholecT50/{_file}"))
+
+        annotations = data.get('annotations', [])
+        categories = data.get('categories', [])
+
+        print(annotations[:10])
+        print(categories)
