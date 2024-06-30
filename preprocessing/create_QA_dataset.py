@@ -127,9 +127,19 @@ if __name__ == "__main__":
     files = os.listdir("/data/shared/CholecT50/CholecT50/labels")
     for _file in range(1,len(files)):
         _file_name = f"VID{int(_file):02d}.json"
-        print(_file_name)
-        data = json.load(open(f"/data/shared/CholecT50/CholecT50/labels/{_file_name}"))
+        _file_name = f"/data/shared/CholecT50/CholecT50/labels/{_file_name}"
 
-        annotations = data["annotations"]
-        categories = data["categories"]
-        print(categories)
+        if os.path.exists(_file_name):
+            data = json.load(open())
+            
+            # categories
+            categories = data["categories"]
+            instruments = categories["instrument"]
+            verbs = categories["verb"]
+            targets = categories["target"]
+            phases = categories["phases"]
+
+            # annotations
+            ann = data["annotations"]
+            for i in ann:
+                print(i)
