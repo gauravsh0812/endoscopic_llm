@@ -129,5 +129,4 @@ if __name__ == "__main__":
 
         annotations = data["annotations"]
         categories = data["categories"]
-        print(annotations[:10])
         print(categories)
