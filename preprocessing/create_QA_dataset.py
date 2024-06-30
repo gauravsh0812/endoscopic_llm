@@ -141,5 +141,5 @@ if __name__ == "__main__":
 
             # annotations
             ann = data["annotations"]
-            for i in ann:
-                print(i)
+            for i,v in ann.items():
+                print(i, v)
