@@ -130,7 +130,7 @@ if __name__ == "__main__":
         _file_name = f"/data/shared/CholecT50/CholecT50/labels/{_file_name}"
 
         if os.path.exists(_file_name):
-            data = json.load(open())
+            data = json.load(open(_file_name))
             
             # categories
             categories = data["categories"]
