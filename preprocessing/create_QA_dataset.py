@@ -127,8 +127,7 @@ if __name__ == "__main__":
     for _file in os.listdir("/data/shared/CholecT50/CholecT50/labels"):
         data = json.load(open(f"/data/shared/CholecT50/CholecT50/labels/{_file}"))
 
-        annotations = data.get('annotations', [])
-        categories = data.get('categories', [])
-
+        annotations = data["annotations"]
+        categories = data["categories"]
         print(annotations[:10])
         print(categories)
