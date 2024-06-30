@@ -124,8 +124,11 @@ def main():
 
 if __name__ == "__main__":
 
-    for _file in os.listdir("/data/shared/CholecT50/CholecT50/labels")[1]:
-        data = json.load(open(f"/data/shared/CholecT50/CholecT50/labels/{_file}"))
+    files = os.listdir("/data/shared/CholecT50/CholecT50/labels")
+    for _file in range(len(files)):
+        _file_name = f"{_file:2f}"
+        print(_file_name)
+        data = json.load(open(f"/data/shared/CholecT50/CholecT50/labels/{_file_name}"))
 
         annotations = data["annotations"]
         categories = data["categories"]
