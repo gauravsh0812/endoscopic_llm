@@ -137,7 +137,7 @@ if __name__ == "__main__":
             instruments = categories["instrument"]
             verbs = categories["verb"]
             targets = categories["target"]
-            phases = categories["phases"]
+            phases = categories["phase"]
 
             # annotations
             ann = data["annotations"]
