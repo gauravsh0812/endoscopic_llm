@@ -57,8 +57,8 @@ def main(ann, categories, fname):
 
             temp["tools"] = []
             temp["phase"] = []
-            temp["action verb"] = []
-            temp["target organ"] = []
+            temp["action_verb"] = []
+            temp["target_organ"] = []
 
             # for _v in v:
             if _v[2] == 1 and _v[9] == 1: # groundtruth only
