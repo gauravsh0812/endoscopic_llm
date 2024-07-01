@@ -79,8 +79,8 @@ def main(ann, categories, fname):
 
                 temp["tools"].append(ins)
                 temp["phase"].append(phs)
-                temp["action verb"].append(vrb)
-                temp["target organ"].append(tgt)
+                temp["action_verb"].append(vrb)
+                temp["target_organ"].append(tgt)
 
                 # temp["caption_1:"] = f"The current phase of the procedure is {phs}. \
                 #                         During this phase, {temp["number of tools"]} tools are being utilized: {ins}. \
