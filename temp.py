@@ -1,19 +1,15 @@
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from PIL import Image
+import requests
+from transformers import AutoProcessor, LlavaForConditionalGeneration
 
-# Load pre-trained GPT-2 model and tokenizer
-model_name = "gpt2"
-tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-model = GPT2LMHeadModel.from_pretrained(model_name)
+model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf")
+processor = AutoProcessor.from_pretrained("llava-hf/llava-1.5-7b-hf")
 
-# Base caption to rewrite
-base_caption = "During the operation phase, two tools, Scissors and Hook, are being used to cut the Stomach."
+prompt = "USER: <image>\nWhat's the content of the image? ASSISTANT:"
+image = Image.open("/data/gauravs/CholecT50/CholecT50/videos/VID01/001000.png")
 
-# Tokenize the input text
-input_ids = tokenizer.encode(base_caption, return_tensors="pt")
+inputs = processor(text=prompt, images=image, return_tensors="pt")
 
-# Generate rewritten sentence
-outputs = model.generate(input_ids, max_length=100, num_return_sequences=1, early_stopping=True)
-
-# Decode and print the rewritten sentence
-rewritten_sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
-print("Rewritten Sentence:", rewritten_sentence)
+# Generate
+generate_ids = model.generate(**inputs, max_new_tokens=15)
+processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
