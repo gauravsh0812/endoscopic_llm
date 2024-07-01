@@ -7,6 +7,9 @@ import torch
 from PIL import Image
 from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+import random
+
 
 """
 Questions:
@@ -25,6 +28,12 @@ transform = Compose([
     Normalize(mean=[0.48145466, 0.4578275, 0.40821073],
                std=[0.26862954, 0.26130258, 0.2757772])  # Normalize the tensor
 ])
+
+# Load pre-trained model and tokenizer
+model_name = "gpt2"  # You can use other models like "EleutherAI/gpt-neo-125M"
+model = GPT2LMHeadModel.from_pretrained(model_name)
+tokenizer = GPT2Tokenizer.from_pretrained(model_name)
+
 
 final_data = {}
 
@@ -73,9 +82,49 @@ def main(ann, categories, fname):
                 temp["action verb"].append(vrb)
                 temp["target organ"].append(tgt)
 
-                temp["caption_1:"] = f"The current phase of the procedure is {phs}. \
-                                        During this phase, {temp["number of tools"]} tools are being utilized: {ins}. \
-                                        The primary focus of the procedure is on the {tgt}, and the action being performed is to {vrb} the organ."
+                # temp["caption_1:"] = f"The current phase of the procedure is {phs}. \
+                #                         During this phase, {temp["number of tools"]} tools are being utilized: {ins}. \
+                #                         The primary focus of the procedure is on the {tgt}, and the action being performed is to {vrb} the organ."
+                
+
+                # Convert structured input to a string
+
+                input_text = (
+                    f"number of tools: {temp['number_of_tools']}, "
+                    f"tools: {temp['tools']}, "
+                    f"phase: {temp['phase']}, "
+                    f"target organ: {temp['target_organ']}, "
+                    f"action verb: {temp['action_verb']}"
+                )
+
+                # Generate captions
+                captions = generate_captions(input_text, num_captions=5)
+                
+                # Print the generated captions
+                for i, caption in enumerate(captions, 1):
+                    print(f"Caption {i}: {caption}")
+                    temp[f"caption_{i}"] = caption
+
+# Generate multiple captions
+def generate_captions(input_text, num_captions=5, max_length=100):
+    captions = []
+    for _ in range(num_captions):
+        input_ids = tokenizer.encode(f"Input: {input_text}\nOutput:", return_tensors="pt")
+        output = model.generate(
+            input_ids,
+            max_length=max_length,
+            num_return_sequences=1,
+            no_repeat_ngram_size=2,  # To avoid repetition
+            temperature=0.7,  # Controls the creativity of the output
+            top_p=0.9,  # Nucleus sampling
+            do_sample=True
+        )
+        generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+        # Extract the generated caption
+        caption = generated_text.split("Output:")[1].strip()
+        captions.append(caption)
+    return captions
+
 
 def create_tensors(ann, fname):
     for i in ann:
@@ -90,7 +139,7 @@ if __name__ == "__main__":
     
     create_image_tensor = True
 
-    for _file in range(1,len(files)):
+    for _file in tqdm.tqdm(range(1,3)):#len(files))):
         _file_name = f"VID{int(_file):02d}.json"
         _file_name = f"/data/shared/CholecT50/CholecT50/labels/{_file_name}"
 
