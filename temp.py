@@ -5,10 +5,10 @@ from transformers import AutoProcessor, LlavaForConditionalGeneration
 model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-13b-hf")
 processor = AutoProcessor.from_pretrained("llava-hf/llava-1.5-13b-hf")
 
-_txt = "The number of tools are 2 that are grasper and hook. The phase is preparation phase and the target organ is liver. \
-    Now based on these details, elaborate this surgiccal scene."
+_txt = "The number of tools are 2 that are grasper and hook. The phase is carlot-triangle-dissection phase, and the target organ is gallbladder. The action verbs are grasp and dissect. Now based on these details, elaborate this surgiccal scene."
+
 prompt = f"USER: <image>\n{_txt} ASSISTANT:"
-image = Image.open("/data/shared/CholecT50/CholecT50/videos/VID01/001101.png")
+image = Image.open("/data/shared/CholecT50/CholecT50/videos/VID10/000377.png")
 
 inputs = processor(text=prompt, images=image, return_tensors="pt")
 
