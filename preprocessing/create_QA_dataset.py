@@ -67,7 +67,7 @@ def main(ann, categories, fname):
                 ins_id = _v[1]
                 vrb_id = _v[7]
                 tgt_id = _v[8]
-                ins,vrb,tgt = triplets[triplet_id].split(",")
+                ins,vrb,tgt = triplets[str(triplet_id)].split(",")
                 phs = phases[phase_id]
 
                 t_ins_id = next((key for key, value in instruments.items() if value == ins), None)
