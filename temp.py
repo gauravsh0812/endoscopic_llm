@@ -1,15 +1,19 @@
-from PIL import Image
-from transformers import AutoProcessor, LlavaForConditionalGeneration
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-v1.6-mistral-7b-hf")
-processor = AutoProcessor.from_pretrained("llava-hf/llava-v1.6-mistral-7b-hf")
+# Load pre-trained T5 model and tokenizer
+model_name = "t5-small"  # You can use "t5-base" or "t5-large" for more capacity
+tokenizer = T5Tokenizer.from_pretrained(model_name)
+model = T5ForConditionalGeneration.from_pretrained(model_name)
 
-prompt = "[INST] <image>\nWhat is shown in this image? [/INST]"
-_path = "/data/gauravs/surgicalGPT/cholec80/images/10.png"
-image = Image.open(_path)
+# Define the context
+context = "number of tools: 2, tools: Scissors, Hook, phase: operation, target organ: Stomach, action verb: Cut"
 
-inputs = processor(text=prompt, images=image, return_tensors="pt")
-print(inputs)
-# Generate
-# generate_ids = model.generate(**inputs, max_length=30)
-# processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
+# Tokenize the context
+inputs = tokenizer("summarize: " + context, return_tensors="pt", max_length=512, truncation=True)
+
+# Generate the caption
+outputs = model.generate(inputs['input_ids'], max_length=150, num_return_sequences=1, early_stopping=True)
+
+# Decode and print the caption
+caption = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print("Generated Caption:", caption)
