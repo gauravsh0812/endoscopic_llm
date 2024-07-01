@@ -62,12 +62,12 @@ def main(ann, categories, fname):
 
             # for _v in v:
             if _v[2] == 1 and _v[9] == 1: # groundtruth only
-                triplet_id = _v[0]
-                phase_id = _v[-1]
-                ins_id = _v[1]
-                vrb_id = _v[7]
-                tgt_id = _v[8]
-                ins,vrb,tgt = triplets[str(triplet_id)].split(",")
+                triplet_id = str(_v[0])
+                phase_id = str(_v[-1])
+                ins_id = str(_v[1])
+                vrb_id = str(_v[7])
+                tgt_id = str(_v[8])
+                ins,vrb,tgt = triplets[triplet_id].split(",")
                 phs = phases[phase_id]
 
                 t_ins_id = next((key for key, value in instruments.items() if value == ins), None)
