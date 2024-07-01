@@ -6,7 +6,7 @@ model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf"
 processor = AutoProcessor.from_pretrained("llava-hf/llava-1.5-7b-hf")
 
 prompt = "USER: <image>\nDescribe the scene in the image? ASSISTANT:"
-image = Image.open("/data/gauravs/CholecT50/CholecT50/videos/VID01/001000.png")
+image = Image.open("/data/shared/CholecT50/CholecT50/videos/VID01/001000.png")
 
 inputs = processor(text=prompt, images=image, return_tensors="pt")
 
