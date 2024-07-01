@@ -5,7 +5,7 @@ from transformers import AutoProcessor, LlavaForConditionalGeneration
 model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf")
 processor = AutoProcessor.from_pretrained("llava-hf/llava-1.5-7b-hf")
 
-prompt = "USER: <image>\nWhat's the content of the image? ASSISTANT:"
+prompt = "USER: <image>\nDescribe the scene in the image? ASSISTANT:"
 image = Image.open("/data/gauravs/CholecT50/CholecT50/videos/VID01/001000.png")
 
 inputs = processor(text=prompt, images=image, return_tensors="pt")
