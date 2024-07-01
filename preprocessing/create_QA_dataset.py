@@ -137,7 +137,7 @@ def create_tensors(ann, fname):
 if __name__ == "__main__":
     files = os.listdir("/data/shared/CholecT50/CholecT50/labels")
     
-    create_image_tensor = True
+    create_image_tensor = False
 
     for _file in tqdm.tqdm(range(1,3)):#len(files))):
         _file_name = f"VID{int(_file):02d}.json"
