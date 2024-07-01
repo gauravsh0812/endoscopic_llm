@@ -2,7 +2,7 @@ from PIL import Image
 import requests
 from transformers import AutoProcessor, LlavaForConditionalGeneration
 
-model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-7b-hf")
+model = LlavaForConditionalGeneration.from_pretrained("llava-hf/llava-1.5-13b-hf")
 processor = AutoProcessor.from_pretrained("llava-hf/llava-1.5-7b-hf")
 
 _txt = "The number of tools are 2 that are grasper and hook. The phase is preparation phase and the target organ is liver. \
