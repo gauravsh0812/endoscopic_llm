@@ -53,12 +53,16 @@ def main(ann, categories, fname):
             temp = {}
             temp["image"] = f"/data/shared/CholecT50/CholecT50/videos/{fname}/{int(i):06d}.png"
             temp["image_tensors"] = f"/data/shared/CholecT50/CholecT50/image_tensors/{fname}/{int(i):06d}.pt"
-            temp["number_of_tools"] = len(v)
+            temp["question_answers"] = {}
+            qa = temp["question_answers"]
 
-            temp["tools"] = []
-            temp["phase"] = []
-            temp["action_verb"] = []
-            temp["target_organ"] = []
+            qa["How many tools are being used?"] = len(v)
+            qa["What tools are being used?"] = []
+            qa["What is the current phase of the surgery?"] = []
+            qa["What action is going on?"] = []
+            qa["Which organ is under surgery?"] = []
+            
+            temp["captions"] = {}
 
             # for _v in v:
             if _v[2] == 1 and _v[9] == 1: # groundtruth only
@@ -77,54 +81,16 @@ def main(ann, categories, fname):
                 assert vrb_id == t_vrb_id
                 assert tgt_id == t_tgt_id
 
-                temp["tools"].append(ins)
-                temp["phase"].append(phs)
-                temp["action_verb"].append(vrb)
-                temp["target_organ"].append(tgt)
-
-                # temp["caption_1:"] = f"The current phase of the procedure is {phs}. \
-                #                         During this phase, {temp["number of tools"]} tools are being utilized: {ins}. \
-                #                         The primary focus of the procedure is on the {tgt}, and the action being performed is to {vrb} the organ."
+                qa["What tools are being used?"].append(ins)
+                qa["What is the current phase of the surgery?"].append(phs)
+                qa["What action is going on?"].append(vrb)
+                qa["Which organ is under surgery?"].append(tgt)
                 
-
-                # Convert structured input to a string
-
-                input_text = (
-                    f"number of tools: {temp['number_of_tools']}, "
-                    f"tools: {temp['tools']}, "
-                    f"phase: {temp['phase']}, "
-                    f"target organ: {temp['target_organ']}, "
-                    f"action verb: {temp['action_verb']}"
-                )
-
-                # Generate captions
-                captions = generate_captions(input_text, num_captions=5)
+                temp["caption"]["caption_1"] = f"The current phase of the procedure is {phs}. \
+                                        During this phase, {temp["number of tools"]} tools are being utilized: {ins}. \
+                                        The primary focus of the procedure is on the {tgt}, \
+                                        and the action being performed is to {vrb} the organ."
                 
-                # Print the generated captions
-                for i, caption in enumerate(captions, 1):
-                    print(f"Caption {i}: {caption}")
-                    temp[f"caption_{i}"] = caption
-
-# Generate multiple captions
-def generate_captions(input_text, num_captions=5, max_length=100):
-    captions = []
-    for _ in range(num_captions):
-        input_ids = tokenizer.encode(f"Input: {input_text}\nOutput:", return_tensors="pt")
-        output = model.generate(
-            input_ids,
-            max_length=max_length,
-            num_return_sequences=1,
-            no_repeat_ngram_size=2,  # To avoid repetition
-            temperature=0.7,  # Controls the creativity of the output
-            top_p=0.9,  # Nucleus sampling
-            do_sample=True
-        )
-        generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
-        # Extract the generated caption
-        caption = generated_text.split("Output:")[1].strip()
-        captions.append(caption)
-    return captions
-
 
 def create_tensors(ann, fname):
     for i in ann:
