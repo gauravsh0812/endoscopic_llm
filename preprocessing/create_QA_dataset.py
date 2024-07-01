@@ -53,7 +53,7 @@ def main(ann, categories, fname):
             temp = {}
             temp["image"] = f"/data/shared/CholecT50/CholecT50/videos/{fname}/{int(i):06d}.png"
             temp["image_tensors"] = f"/data/shared/CholecT50/CholecT50/image_tensors/{fname}/{int(i):06d}.pt"
-            temp["number of tools"] = len(v)
+            temp["number_of_tools"] = len(v)
 
             temp["tools"] = []
             temp["phase"] = []
