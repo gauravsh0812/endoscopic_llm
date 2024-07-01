@@ -13,6 +13,6 @@ image = Image.open("/data/shared/CholecT50/CholecT50/videos/VID01/001101.png")
 inputs = processor(text=prompt, images=image, return_tensors="pt")
 
 # Generate
-generate_ids = model.generate(**inputs, max_new_tokens=300)
+generate_ids = model.generate(**inputs, max_new_tokens=500)
 output = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
 print(output)
